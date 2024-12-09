@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ</title>
+    <link rel="stylesheet" href="../../public/css/home.css"> 
+    <link rel="stylesheet" href="../../public/css/header.css"> 
+<body>
+    {{> header}} 
+    <main>
+        <section>
+            <h2>Bài Viết Nổi Bật</h2>
+            <div id="top-articles"></div> 
+        </section>
+        <section>
+            <h2>Bài Viết Được Xem Nhiều Nhất</h2>
+            <div id="most-viewed-articles"></div> 
+        </section>
+        <section>
+            <h2>Bài Viết Mới Nhất</h2>
+            <div id="latest-articles"></div> 
+        </section>
+    </main>
+    {{> footer}} <!-- Sử dụng partial footer -->
+    
+    <script>
+        async function fetchArticles() {
+            try {
+                const response = await fetch('http://localhost:8080/guest/home');
+                const data = await response.json();
+                displayArticles(data);
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+            }
+        }
+
+        function displayArticles(data) {
+            const { topArticles, mostViewedArticles, latestArticles } = data;
+            
+            const topArticlesList = document.getElementById('top-articles');
+            topArticles.forEach(article => {
+                const articleItem = document.createElement('div');
+                articleItem.classList.add('article');
+                articleItem.innerHTML = `
+                    <img src="${article.image}" alt="${article.title}">
+                    <h3>${article.title}</h3>
+                    <p>${article.summary}</p>
+                    <a href="/guest/article/${article._id}">Đọc thêm</a>
+                `;
+                topArticlesList.appendChild(articleItem);
+            });
+
+            const mostViewedArticlesList = document.getElementById('most-viewed-articles');
+            mostViewedArticles.forEach(article => {
+                const articleItem = document.createElement('div');
+                articleItem.classList.add('article');
+                articleItem.innerHTML = `
+                    <img src="${article.image}" alt="${article.title}">
+                    <h3>${article.title}</h3>
+                    <p>${article.summary}</p>
+                    <a href="/guest/article/${article._id}">Đọc thêm</a>
+                `;
+                mostViewedArticlesList.appendChild(articleItem);
+            });
+
+            const latestArticlesList = document.getElementById('latest-articles');
+            latestArticles.forEach(article => {
+                const articleItem = document.createElement('div');
+                articleItem.classList.add('article');
+                articleItem.innerHTML = `
+                    <img src="${article.image}" alt="${article.title}">
+                    <h3>${article.title}</h3>
+                    <p>${article.summary}</p>
+                    <a href="/guest/article/${article._id}">Đọc thêm</a>
+                `;
+                latestArticlesList.appendChild(articleItem);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchArticles);
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Viết</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    {{> header}}
+    <main>
+        <article id="article-content">
+            <!-- Nội dung bài viết sẽ được thêm vào đây bằng JavaScript -->
+            <!-- lấy nội dung bài viết từ backend: tilte, summary -->
+
+            <!-- Hiển thị bình luận -->
+            <!-- fetch dữ liệu bình luận từ API khi trang được load --> 
+            fetchArticleData();
+            
+            <!-- Hiển thị form đăng bình luận -->
+            <form id="comment-form">
+                <label for="comment-name">Tên:</label>
+                <input type="text" id="comment-name" name="comment-name" required>
+        </article>
+        <section>
+            <h2>Bình Luận</h2>
+            <div id="comments-section">
+                <!-- Các bình luận sẽ được thêm vào đây bằng JavaScript -->
+                <!-- Lấy dữ liệu bình luận từ API khi trang được load --> 
+                
+                <!-- Thêm các bình luận vào section -->
+                 <!-- Hiển thị form đăng bình luận -->
+            <form id="comment-form">
+                <label for="comment-name">Tên:</label>
+                <input type="text" id="comment-name" name="comment-name" required>
+                <div class="comment">
+                    <p>Tên: John Doe</p>
+            </div>
+        </section>
+    </main>
+    {{> footer}}
+    
+    <script>
+        // Fetch dữ liệu bài viết từ API khi trang được load
+        async function fetchArticleData() {
+            const articleId = window.location.pathname.split('/').pop(); // Lấy ID bài viết từ URL
+            
+            try {
+                const response = await fetch(`http://localhost:8080/guest/article/${articleId}`);
+                const article = await response.json();
+                displayArticleData(article);
+            } catch (error) {
+                console.error('Error fetching article data:', error);
+            }
+        }
+
+        // Hiển thị dữ liệu bài viết và bình luận
+        function displayArticleData(article) {
+            const articleContent = document.getElementById('article-content');
+            const commentsSection = document.getElementById('comments-section');
+            
+            // Hiển thị nội dung bài viết
+            articleContent.innerHTML = `
+                <h1>${article.title}</h1>
+                <p>${article.date}</p>
+                <img src="${article.image}" alt="${article.title}">
+                <div>
+                    <h2>Nội Dung</h2>
+                    <p>${article.content}</p>
+                </div>
+            `;
+            
+            // Hiển thị các bình luận
+            article.comments.forEach(comment => {
+                const commentItem = document.createElement('div');
+                commentItem.classList.add('comment');
+                commentItem.innerHTML = `
+                    <p><strong>${comment.author}</strong> - ${comment.date}</p>
+                    <p>${comment.content}</p>
+                `;
+                commentsSection.appendChild(commentItem);
+            });
+        }
+
+        // Gọi hàm fetchArticleData khi trang được load
+        document.addEventListener('DOMContentLoaded', fetchArticleData);
+    </script>
+</body>
+</html>

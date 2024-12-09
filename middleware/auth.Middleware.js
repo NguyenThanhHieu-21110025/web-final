@@ -29,6 +29,32 @@ const middlewareController = {
        });
     },
     //validate phone number isVNmese
+    // đảm baor người dùng đã đăng nhập và tk tồn tại
+    isAuthenticated: (req, res, next) => {
+        try {
+            const authHeader = req.headers.authorization; // Lấy Authorization header
+            if (!authHeader) {
+                return res.status(401).json({ message: "Authentication token is missing" });
+            }
+    
+            // Kiểm tra xem header có bắt đầu bằng "Bearer"
+            const [scheme, token] = authHeader.split(" ");
+            if (scheme !== "Bearer" || !token) {
+                return res.status(401).json({ message: "Invalid token format" });
+            }
+    
+            // Xác minh token
+            jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+                if (err) {
+                    return res.status(403).json({ message: "Token is not valid", error: err.message });
+                }
+                req.user = user; // Gắn user vào req
+                next(); // Chuyển tiếp
+            });
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error: error.message });
+        }
+    }
 }
 
 module.exports = middlewareController;
