@@ -1,3 +1,4 @@
+const { error } = require('console');
 const Article = require('../models/articleModel');
 
 const guestController = {
@@ -8,7 +9,7 @@ const guestController = {
             const latestArticles = await Article.find().sort({ createdAt: -1 }).limit(10);
             res.render('guest/home', { topArticles, mostViewedArticles, latestArticles });
         } catch (err) {
-            res.status(500).json(err);
+            res.status(500).json({error});
         }
     },
     getCategoryArticles: async (req, res) => {
@@ -16,7 +17,6 @@ const guestController = {
             let categoryId = req.params.id;
     
             if (!mongoose.isValidObjectId(categoryId)) {
-                // Nếu không phải ObjectId, tìm bằng slug
                 const category = await Category.findOne({ slug: req.params.slug });
                 if (!category) {
                     return res.status(404).json({ message: 'Category not found' });
@@ -27,7 +27,7 @@ const guestController = {
             const articles = await Article.find({ category: categoryId }).limit(10);
             res.render('guest/category', { articles });
         } catch (err) {
-            res.status(500).json(err);
+            res.status(500).json(error);
         }
     },
     getTagArticles: async (req, res) => {
@@ -46,6 +46,7 @@ const guestController = {
             res.status(500).json(err);
         }
     },
+    
 };
 
 module.exports = guestController;

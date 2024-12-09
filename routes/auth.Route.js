@@ -4,7 +4,13 @@ const middlewareController = require("../middleware/auth.Middleware");
 const router = require("express").Router();
 
 router.post("/register", authController.registerUser);
+router.get("/register", (req, res) => {
+    res.render("guest/register"); 
+});
 router.post("/login", authController.loginUser);
+router.get("/login", (req, res) => {
+    res.render("guest/login"); 
+});
 router.post("/refresh", authController.requestRefreshToken);
 router.delete("/:id",middlewareController.verifyTokenAndAdminAuth, authController.deleteUsers);
 router.post("/logout",middlewareController.verifyToken, authController.userLogout);

@@ -1,10 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Trang Chủ</title>
-    <link rel="stylesheet" href="../../public/css/home.css"> 
-    <link rel="stylesheet" href="../../public/css/header.css"> 
+    <link rel="stylesheet" href="../../public/css/home.css">
+    <link rel="stylesheet" href="../../public/css/header.css">
+    <link rel="stylesheet" href="../../public/css/footer.css">
+</head>
 <body>
     {{> header}} 
     <main>
@@ -21,7 +24,7 @@
             <div id="latest-articles"></div> 
         </section>
     </main>
-    {{> footer}} <!-- Sử dụng partial footer -->
+    {{> footer}} 
     
     <script>
         async function fetchArticles() {
@@ -36,7 +39,7 @@
 
         function displayArticles(data) {
             const { topArticles, mostViewedArticles, latestArticles } = data;
-            
+
             const topArticlesList = document.getElementById('top-articles');
             topArticles.forEach(article => {
                 const articleItem = document.createElement('div');

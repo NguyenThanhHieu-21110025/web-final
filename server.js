@@ -12,6 +12,9 @@ const authRoutes = require('./routes/auth.Route');
 const guestRoutes = require('./routes/guestRoutes');
 const subscriberRoutes = require('./routes/subscriberRoutes');
 
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+
 app.use(express.json());
 
 const dbURI = process.env.MONGODB_URI;
@@ -23,7 +26,7 @@ if (!dbURI) {
 mongoose.connect(dbURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true, // Sử dụng createIndexes thay cho ensureIndex
+    useCreateIndex: true, 
 })
     .then(() => {
         console.log('Connected to MongoDB');
@@ -40,15 +43,20 @@ app.use(cookieParser());
 
 // Set view engine
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
+// app.set('views', path.join(__dirname, 'views'));
 
+app.set('views', path.join(__dirname, 'views'));
 hbs.registerPartials(path.join(__dirname, 'views/partials'));
+
 
 // Routes
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/guest', guestRoutes);
 app.use('/subscriber', subscriberRoutes);
+
+
+app.use(express.static('public/css'));
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
