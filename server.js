@@ -6,14 +6,16 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser'); 
 
 const userRoutes = require('./routes/user.Route');
-const authRoutes = require('./routes/auth.Route'); 
+const authRoutes = require('./routes/auth.Route');
+const writerRoutes = require('./routes/writer.Route');
+const editorRoutes = require('./routes/editor.Route');
 
 app.use(express.json());
 
 const dbURI = process.env.MONGODB_URI;
 if (!dbURI) {
     console.error('MongoDB connection string is not defined.');
-    process.exit(1); 
+    process.exit(1);
 }
 
 mongoose.connect(dbURI)
@@ -32,6 +34,8 @@ app.use(cookieParser());
 
 app.use('/api/user', userRoutes); 
 app.use('/api/auth', authRoutes);
+app.use('/api/writer', writerRoutes);
+app.use('/api/editor', editorRoutes);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
