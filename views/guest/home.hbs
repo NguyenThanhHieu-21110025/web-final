@@ -1,86 +1,60 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trang Chủ</title>
-    <link rel="stylesheet" href="../../public/css/home.css">
-    <link rel="stylesheet" href="../../public/css/header.css">
-    <link rel="stylesheet" href="../../public/css/footer.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Electronic Newspaper</title>
+    <link rel="stylesheet" href="../../public/css/main.css">
 </head>
 <body>
-    {{> header}} 
+    <header>
+        <!-- Menu -->
+        <nav>
+            <ul>
+                <li><a href="/guest/home">Home</a></li>
+                <li><a href="/guest/category/kinh-doanh-nong-san">Nông Sản</a></li>
+                <li><a href="/guest/category/kinh-doanh-hai-san">Hải Sản</a></li>
+                <!-- Add more menu items here -->
+            </ul>
+        </nav>
+    </header>
+
     <main>
-        <section>
-            <h2>Bài Viết Nổi Bật</h2>
-            <div id="top-articles"></div> 
+        <section class="highlighted-articles">
+            <h2>Highlighted Articles</h2>
+            {{#each topArticles}}
+                <article>
+                    <h3>{{this.title}}</h3>
+                    <p>Category: {{this.category}}</p>
+                    <p>Date: {{this.createdAt}}</p>
+                    <img src="{{this.thumbnail}}" alt="{{this.title}}">
+                </article>
+            {{/each}}
         </section>
-        <section>
-            <h2>Bài Viết Được Xem Nhiều Nhất</h2>
-            <div id="most-viewed-articles"></div> 
+
+        <section class="most-viewed-articles">
+            <h2>Most Viewed Articles</h2>
+            {{#each mostViewedArticles}}
+                <article>
+                    <h3>{{this.title}}</h3>
+                    <p>Category: {{this.category}}</p>
+                    <p>Date: {{this.createdAt}}</p>
+                    <img src="{{this.thumbnail}}" alt="{{this.title}}">
+                </article>
+            {{/each}}
         </section>
-        <section>
-            <h2>Bài Viết Mới Nhất</h2>
-            <div id="latest-articles"></div> 
+
+        <section class="latest-articles">
+            <h2>Latest Articles</h2>
+            {{#each latestArticles}}
+                <article>
+                    <h3>{{this.title}}</h3>
+                    <p>Category: {{this.category}}</p>
+                    <p>Date: {{this.createdAt}}</p>
+                    <img src="{{this.thumbnail}}" alt="{{this.title}}">
+                </article>
+            {{/each}}
         </section>
     </main>
-    {{> footer}} 
-    
-    <script>
-        async function fetchArticles() {
-            try {
-                const response = await fetch('http://localhost:8080/guest/home');
-                const data = await response.json();
-                displayArticles(data);
-            } catch (error) {
-                console.error('Error fetching articles:', error);
-            }
-        }
-
-        function displayArticles(data) {
-            const { topArticles, mostViewedArticles, latestArticles } = data;
-
-            const topArticlesList = document.getElementById('top-articles');
-            topArticles.forEach(article => {
-                const articleItem = document.createElement('div');
-                articleItem.classList.add('article');
-                articleItem.innerHTML = `
-                    <img src="${article.image}" alt="${article.title}">
-                    <h3>${article.title}</h3>
-                    <p>${article.summary}</p>
-                    <a href="/guest/article/${article._id}">Đọc thêm</a>
-                `;
-                topArticlesList.appendChild(articleItem);
-            });
-
-            const mostViewedArticlesList = document.getElementById('most-viewed-articles');
-            mostViewedArticles.forEach(article => {
-                const articleItem = document.createElement('div');
-                articleItem.classList.add('article');
-                articleItem.innerHTML = `
-                    <img src="${article.image}" alt="${article.title}">
-                    <h3>${article.title}</h3>
-                    <p>${article.summary}</p>
-                    <a href="/guest/article/${article._id}">Đọc thêm</a>
-                `;
-                mostViewedArticlesList.appendChild(articleItem);
-            });
-
-            const latestArticlesList = document.getElementById('latest-articles');
-            latestArticles.forEach(article => {
-                const articleItem = document.createElement('div');
-                articleItem.classList.add('article');
-                articleItem.innerHTML = `
-                    <img src="${article.image}" alt="${article.title}">
-                    <h3>${article.title}</h3>
-                    <p>${article.summary}</p>
-                    <a href="/guest/article/${article._id}">Đọc thêm</a>
-                `;
-                latestArticlesList.appendChild(articleItem);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchArticles);
-    </script>
 </body>
 </html>

@@ -2,87 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bài Viết</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Detail - Electronic Newspaper</title>
+    <link rel="stylesheet" href="../../public/css/main.css">
 </head>
 <body>
-    {{> header}}
-    <main>
-        <article id="article-content">
-            <!-- Nội dung bài viết sẽ được thêm vào đây bằng JavaScript -->
-            <!-- lấy nội dung bài viết từ backend: tilte, summary -->
+    <header>
+        <!-- Menu -->
+        <nav>
+            <ul>
+                <li><a href="/guest/home">Home</a></li>
+                <li><a href="/guest/category/kinh-doanh-nong-san">Nông Sản</a></li>
+                <li><a href="/guest/category/kinh-doanh-hai-san">Hải Sản</a></li>
+                <!-- Add more menu items here -->
+            </ul>
+        </nav>
+    </header>
 
-            <!-- Hiển thị bình luận -->
-            <!-- fetch dữ liệu bình luận từ API khi trang được load --> 
-            fetchArticleData();
-            
-            <!-- Hiển thị form đăng bình luận -->
-            <form id="comment-form">
-                <label for="comment-name">Tên:</label>
-                <input type="text" id="comment-name" name="comment-name" required>
+    <main>
+        <article>
+            <h1>{{article.title}}</h1>
+            <p>Category: {{article.category}}</p>
+            <p>Date: {{article.createdAt}}</p>
+            <img src="{{article.thumbnail}}" alt="{{article.title}}">
+            <p>{{article.content}}</p>
+            <p>Tags: {{#each article.tags}}<span>{{this}}</span>{{/each}}</p>
         </article>
-        <section>
-            <h2>Bình Luận</h2>
-            <div id="comments-section">
-                <!-- Các bình luận sẽ được thêm vào đây bằng JavaScript -->
-                <!-- Lấy dữ liệu bình luận từ API khi trang được load --> 
-                
-                <!-- Thêm các bình luận vào section -->
-                 <!-- Hiển thị form đăng bình luận -->
-            <form id="comment-form">
-                <label for="comment-name">Tên:</label>
-                <input type="text" id="comment-name" name="comment-name" required>
+
+        <section class="comments">
+            <h2>Comments</h2>
+            {{#each article.comments}}
                 <div class="comment">
-                    <p>Tên: John Doe</p>
-            </div>
+                    <p>{{this.date}}</p>
+                    <p>{{this.userName}}</p>
+                    <p>{{this.content}}</p>
+                </div>
+            {{/each}}
+        </section>
+
+        <section class="random-articles">
+            <h2>Related Articles</h2>
+            {{#each randomArticles}}
+                <article>
+                    <h3>{{this.title}}</h3>
+                    <p>Category: {{this.category}}</p>
+                    <p>Date: {{this.createdAt}}</p>
+                    <img src="{{this.thumbnail}}" alt="{{this.title}}">
+                </article>
+            {{/each}}
         </section>
     </main>
-    {{> footer}}
-    
-    <script>
-        // Fetch dữ liệu bài viết từ API khi trang được load
-        async function fetchArticleData() {
-            const articleId = window.location.pathname.split('/').pop(); // Lấy ID bài viết từ URL
-            
-            try {
-                const response = await fetch(`http://localhost:8080/guest/article/${articleId}`);
-                const article = await response.json();
-                displayArticleData(article);
-            } catch (error) {
-                console.error('Error fetching article data:', error);
-            }
-        }
-
-        // Hiển thị dữ liệu bài viết và bình luận
-        function displayArticleData(article) {
-            const articleContent = document.getElementById('article-content');
-            const commentsSection = document.getElementById('comments-section');
-            
-            // Hiển thị nội dung bài viết
-            articleContent.innerHTML = `
-                <h1>${article.title}</h1>
-                <p>${article.date}</p>
-                <img src="${article.image}" alt="${article.title}">
-                <div>
-                    <h2>Nội Dung</h2>
-                    <p>${article.content}</p>
-                </div>
-            `;
-            
-            // Hiển thị các bình luận
-            article.comments.forEach(comment => {
-                const commentItem = document.createElement('div');
-                commentItem.classList.add('comment');
-                commentItem.innerHTML = `
-                    <p><strong>${comment.author}</strong> - ${comment.date}</p>
-                    <p>${comment.content}</p>
-                `;
-                commentsSection.appendChild(commentItem);
-            });
-        }
-
-        // Gọi hàm fetchArticleData khi trang được load
-        document.addEventListener('DOMContentLoaded', fetchArticleData);
-    </script>
 </body>
 </html>
