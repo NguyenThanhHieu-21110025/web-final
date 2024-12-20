@@ -1,0 +1,112 @@
+/* Reset một số thuộc tính mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body của trang */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Main nội dung */
+#login-main {
+    width: 100%;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#login-main h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #333;
+}
+
+/* Form đăng nhập */
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#login-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+#login-form label {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    color: #555;
+}
+
+#login-form input {
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+#login-form input:focus {
+    border-color: #4CAF50;
+}
+
+/* Button */
+#login-form button {
+    padding: 12px;
+    font-size: 1.2em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#login-form button:hover {
+    background-color: #45a049;
+}
+
+/* Thông báo lỗi và thành công */
+#login-message {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#login-message.success {
+    color: #28a745;
+}
+
+#login-message.error {
+    color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    #register-main {
+        width: 90%;
+        padding: 20px;
+    }
+
+    #register-main h2 {
+        font-size: 1.6em;
+    }
+
+    #register-form {
+        gap: 15px;
+    }
+
+    #register-form input, #register-form button {
+        font-size: 1em;
+    }
+}

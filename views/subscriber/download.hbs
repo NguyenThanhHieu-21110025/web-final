@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tải Bài Viết Premium</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    {{> header}}
+    <main>
+        <section>
+            <h2>Bài Viết Premium</h2>
+            {{#each premiumArticles}}
+                <div class="article">
+                    <img src="{{this.image}}" alt="{{this.title}}">
+                    <h3>{{this.title}}</h3>
+                    <p>{{this.summary}}</p>
+                    <a href="/subscriber/download/{{this._id}}">Tải về</a>
+                </div>
+            {{/each}}
+        </section>
+    </main>
+    {{> footer}}
+</body>
+</html>

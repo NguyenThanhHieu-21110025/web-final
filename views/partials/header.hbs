@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang web của bạn</title>
+    <link rel="stylesheet" href="../../public/css/header.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <!-- Icon người dùng -->
+        <div class="user-icon" onclick="toggleUserMenu()">
+            <img src="user-icon.png" alt="User" />
+        </div>
+
+        <!-- Nút hamburger -->
+        <div class="hamburger-menu" onclick="toggleDropdownMenu()">
+            &#9776; <!-- Biểu tượng 3 dấu gạch -->
+        </div>
+
+        <!-- Dropdown menu -->
+        <div class="dropdown-menu" id="dropdown-menu">
+            <button class="menu-btn" onclick="location.href='/home';">Trang Chủ</button>
+            <button class="menu-btn" onclick="location.href='/categories';">Chuyên Mục</button>
+            <button class="menu-btn" onclick="location.href='/tags';">Nhãn</button>
+        </div>
+
+        <!-- Menu người dùng -->
+        <div class="user-menu" id="user-menu">
+            <a href="/login">Đăng Nhập</a>
+            <a href="/register">Đăng Ký</a>
+        </div>
+    </header>
+
+    <!-- Thêm script -->
+    <script src="../../public/assets/menu-toggle.js"></script>
+</body>
+</html>

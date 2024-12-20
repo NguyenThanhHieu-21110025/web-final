@@ -1,0 +1,73 @@
+/* Đảm bảo rằng các thay đổi chỉ ảnh hưởng đến phần đăng ký */
+#register-main {
+    background-color: #f4f4f4;  /* Màu nền nhẹ cho phần đăng ký */
+    padding: 20px;
+    margin: 50px auto;
+    width: 400px;  /* Giới hạn chiều rộng để tạo cảm giác cân đối */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Căn chỉnh các form */
+#register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Căn chỉnh các label và input trong form */
+#register-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;  /* Đảm bảo label chiếm toàn bộ chiều rộng */
+    width: 100%;
+}
+
+#register-form input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;    
+}
+
+#register-form div {
+    margin-bottom: 15px; /* Thêm khoảng cách giữa các trường nhập */
+}
+
+/* Đảm bảo button đăng ký có chiều rộng phù hợp */
+#register-form button {
+    background-color: #4CAF50; /* Màu xanh */
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;  /* Đảm bảo nút đăng ký có chiều rộng 100% */
+}
+
+#register-form button:hover {
+    background-color: #45a049; /* Màu xanh đậm khi hover */
+}
+
+
+/* Thông báo lỗi hoặc thành công */
+#message {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Responsive: Điều chỉnh kích thước màn hình nhỏ */
+@media screen and (max-width: 600px) {
+    #register-main {
+        width: 90%;
+    }
+
+    #register-form input,
+    #register-form button {
+        font-size: 14px;
+    }
+}
