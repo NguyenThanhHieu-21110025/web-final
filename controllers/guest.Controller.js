@@ -1,6 +1,6 @@
 const Category = require("../models/categoryModel");
 const Article = require('../models/articleModel');
-import * as mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const ApiResponse = require("../utils/ApiReponse.js")
 
