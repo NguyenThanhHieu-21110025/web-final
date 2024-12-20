@@ -11,8 +11,9 @@ const userRoutes = require('./routes/user.Route');
 const authRoutes = require('./routes/auth.Route');
 const guestRoutes = require('./routes/guestRoutes');
 const subscriberRoutes = require('./routes/subscriberRoutes');
-
-app.use('/public', express.static(path.join(__dirname, 'public')));
+const CommentRoutes = require('./routes/comment.Route');
+const tagsRoutes = require('./routes/tag.Route');
+const mediaRoutes = require('./routes/media.Route');
 
 
 app.use(express.json());
@@ -54,6 +55,12 @@ app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/guest', guestRoutes);
 app.use('/subscriber', subscriberRoutes);
+
+app.use('/api/comment', CommentRoutes);
+// app.use('/api', require('./routes/Subscription.Routes'));
+app.use('/api/tag', tagsRoutes);
+app.use('/api/media', mediaRoutes);
+
 
 
 app.use(express.static('public/css'));

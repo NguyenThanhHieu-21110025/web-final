@@ -16,10 +16,12 @@ const UserSchema = new Schema({
         required: true
     },
     full_name: {
-        type: String
+        type: String,
+        default: ""
     },
     pen_name: {
-        type: String
+        type: String,
+        default: ""
     },
     date_of_birth: {
         type: Date
@@ -29,7 +31,32 @@ const UserSchema = new Schema({
         enum: ['guest', 'subscriber', 'writer', 'editor', 'administrator'],
         default: 'guest'
     },
-    subscription_expiry: { type: Date },
+    admin: {  
+        type: Boolean,
+        default: false
+    },
+    subscription_expiry: {
+        type: Date
+    },
+    refreshTokens: [  
+        {
+            token: {
+                type: String,
+                required: true
+            },
+            expiresAt: {
+                type: Date,
+                required: true
+            }
+        }
+    ],
+    isVerified: {   // Trường xác thực email
+        type: Boolean,
+        default: false
+    },
+    verificationToken: {   // Token xác thực email
+        type: String,
+    },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 });
