@@ -1,4 +1,6 @@
+const path = require('path');
 const Article = require('../models/articleModel');
+<<<<<<< HEAD
 const User = require('../models/user.Model');
 const puppeteer = require('puppeteer');
 const path = require('path');
@@ -30,10 +32,18 @@ const generatePDF = async (htmlContent, articleTitle) => {
 
     return filePath;
 };
+=======
+>>>>>>> fef4234588e2dcb1fe6582faba9219f140d91f67
 
 const subscriberController = {
+    // Render trang các tùy chọn đăng ký
     getSubscriptionOptions: (req, res) => {
-        res.render('subscriber/subscribe');
+        res.render('subscriber/subscribe', {
+            plans: [
+                { name: 'Monthly', price: 100000 },
+                { name: 'Yearly', price: 1000000 },
+            ],
+        });
     },
     subscribe: async (req, res, next) => {
         const user = await User.findById(req.user.id);
@@ -42,6 +52,7 @@ const subscriberController = {
         }
         // TODO : handle when subscribe.
 
+<<<<<<< HEAD
         await User.findByIdAndUpdate(req.user.id, {$inc: {subscriptionExpiry: 1000 * 60 * 60 * 24 * 7}});
         return ApiResponse.success(res);
     },
@@ -67,10 +78,20 @@ const subscriberController = {
             const article = await Article.findById(req.params.id);
             if (!article) {
                 return res.status(404).json({message: 'Article not found'});
+=======
+    // Tải bài viết (chỉ dành cho người dùng có đăng ký hợp lệ)
+    downloadArticle: async (req, res) => {
+        try {
+            // Lấy bài viết
+            const article = await Article.findById(req.params.id);
+            if (!article) {
+                return res.status(404).render('errors/404', { message: 'Article not found.' });
+>>>>>>> fef4234588e2dcb1fe6582faba9219f140d91f67
             }
             //Gen PDF file
             const filePath = await generatePDF(article?.content, article?.title);
             // Tải file
+<<<<<<< HEAD
             res.download(filePath, (err) => {
                 if (err) {
                     return res.status(500).json({message: 'Error downloading file', error: err.message});
@@ -78,6 +99,15 @@ const subscriberController = {
             });
         } catch (err) {
             res.status(500).json({message: 'Internal server error', error: err.message});
+=======
+            res.download(path.join(__dirname, '../uploads', article.filePath), (err) => {
+                if (err) {
+                    return res.status(500).render('errors/500', { message: 'Error downloading file.', error: err.message });
+                }
+            });
+        } catch (err) {
+            res.status(500).render('errors/500', { message: 'Internal server error.', error: err.message });
+>>>>>>> fef4234588e2dcb1fe6582faba9219f140d91f67
         }
     },
 };

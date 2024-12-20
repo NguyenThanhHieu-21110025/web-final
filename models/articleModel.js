@@ -1,89 +1,88 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const articleSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 20, // min title length is 20
-        maxlength: 150, //m ax title length is 150
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 20, // min title length is 20
+    maxlength: 150, //m ax title length is 150
+  },
+  content: {
+    type: String,
+    required: true,
+    minlength: 200,
+    maxLength: 30000,
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
+  tags: [
+    {
+      type: String,
+      trim: true,
+      maxlength: 30,
     },
-    content: {
-        type: String,
-        required: true,
-        minlength: 200,
-        maxLength: 30000,
-    },
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
-    category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true,
-    },
-    tags: [
-        {
-            type: String,
-            trim: true,
-            maxlength: 30,
-        },
-    ],
-    views: {
-        type: Number,
-        default: 0,
-        min: 0,
-    },
-    summary: {
-        type: String,
-        trim: true,
-        maxlength: 300,
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
-    isPublished: {
-        type: Boolean,
-        default: false,
-    },
-    publishedAt: {
-        type: Date,
-        required: false
-    },
-    status: {
-        type: String,
-        enum: ['draft', 'pending', 'published', 'denied'],
-        default: 'draft',
-        required: true
-    },
-    thumbnail: {
-        type: String,
-        trim: true,
-        maxlength: 255,
-    },
-    isPremium: {
-        type: Boolean,
-        default: false,
-        required: true,
-    },
-    note: {
-        type: String,
-        required: false
-    }
+  ],
+  views: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  summary: {
+    type: String,
+    trim: true,
+    maxlength: 300,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  isPublished: {
+    type: Boolean,
+    default: false,
+  },
+  publishedAt: {
+    type: Date,
+    required: false,
+  },
+  status: {
+    type: String,
+    enum: ["draft", "pending", "published", "denied"],
+    default: "draft",
+    required: true,
+  },
+  thumbnail: {
+    type: String,
+    trim: true,
+    maxlength: 255,
+  },
+  isPremium: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  note: {
+    type: String,
+    required: false,
+  },
 });
 
-articleSchema.index({title: 'text', content: 'text', tags: 'text'});
-const Article = mongoose.model('Article', articleSchema);
+articleSchema.index({ title: "text", content: "text", tags: "text" });
+const Article = mongoose.model("Article", articleSchema);
 
 module.exports = Article;
-
 
 // ví dụ
 // {
