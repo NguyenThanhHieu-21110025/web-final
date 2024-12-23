@@ -79,7 +79,6 @@ const guestController = {
             res.status(500).json(err);
         }
     },
-
 };
 
 module.exports = guestController;
