@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân - {{user.username}}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .profile-left,
+        .profile-right {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .avatar img {
+            border-radius: 50%;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .avatar img:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-right form input {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            width: 100%;
+        }
+
+        .profile-right form button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-right form button:hover {
+            background-color: #2563eb;
+        }
+
+        .articles ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .articles ul li {
+            margin-bottom: 8px;
+        }
+
+        .articles ul li a {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .articles ul li a:hover {
+            color: #1d4ed8;
+        }
+
+        .top-article {
+            background-color: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-article-content a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .top-article-content a:hover {
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="profile-container grid grid-cols-3 gap-8">
+
+            <div class="profile-left col-span-1 bg-white p-6 rounded-lg shadow-md">
+                <div class="avatar mb-4">
+                    <img src="{{#if user.avatar}}{{user.avatar}}{{else}}/img/icons8-user-30.png{{/if}}" alt="Avatar"
+                        class="w-32 h-32 rounded-full mx-auto">
+                </div>
+                <h2 class="text-xl font-semibold mb-2">{{user.username}}</h2>
+                <p class="text-gray-500">Email: {{user.email}}</p>
+                <p class="text-gray-500">Ngày sinh: {{user.dateOfBirth}}</p>
+                <p class="text-gray-500">Ngày tham gia: {{user.createdAt}}</p>
+
+                <div class="articles mt-6">
+                    <h3 class="text-lg font-semibold">Bài viết đã tải lên</h3>
+                    <ul>
+                        {{#each articles}}
+                        <li>
+                            <a href="/articles/{{this._id}}" class="text-blue-500">{{this.title}}</a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+
+                <button onclick="window.location.href='/logout'"
+                    class="bg-red-500 text-white p-2 mt-4 rounded-full">Đăng xuất</button>
+            </div>
+
+            <div class="profile-right col-span-2 bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Thông tin cá nhân</h3>
+                <form action="/v1/profile/update" method="POST">
+                    <div class="mb-4">
+                        <label for="full_name" class="block text-sm font-semibold">Họ tên</label>
+                        <input type="text" id="full_name" name="full_name" value="{{user.full_name}}"
+                            class="w-full p-3 border border-gray-300 rounded">
+                    </div>
+                    <div class="mb-4">
+                        <label for="pen_name" class="block text-sm font-semibold">Bút danh</label>
+                        <input type="text" id="pen_name" name="pen_name" value="{{user.pen_name}}"
+                            class="w-full p-3 border border-gray-300 rounded">
+                    </div>
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-semibold">Tên người dùng</label>
+                        <input type="text" id="username" name="username" value="{{user.username}}"
+                            class="w-full p-3 border border-gray-300 rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="dateOfBirth" class="block text-sm font-semibold">Ngày sinh</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" value="{{user.dateOfBirth}}"
+                            class="w-full p-3 border border-gray-300 rounded">
+                    </div>
+                    <div class="mb-4">
+                        <label for="new_password" class="block text-sm font-semibold">Mật khẩu mới</label>
+                        <input type="password" id="new_password" name="new_password"
+                            class="w-full p-3 border border-gray-300 rounded">
+                    </div>
+                    <div class="mb-4">
+                        <label for="confirm_password" class="block text-sm font-semibold">Nhập lại mật khẩu mới</label>
+                        <input type="password" id="confirm_password" name="confirm_password"
+                            class="w-full p-3 border border-gray-300 rounded">
+                        <p class="text-gray-500 text-sm mt-1">Chỉ nhập mật khẩu mới nếu bạn muốn thay đổi</p>
+                    </div>
+                    <button type="submit" class="bg-blue-500 text-white p-3 rounded-full">Cập nhật thông tin</button>
+                </form>
+
+
+            </div>
+        </div>
+
+        <div class="top-article mt-8 bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4">Bài viết có nhiều lượt xem nhất</h3>
+            {{#if topArticle}}
+            <div class="top-article-content">
+                <h4 class="text-lg font-semibold">{{topArticle.title}}</h4>
+                <p>{{topArticle.summary}}</p>
+                <a href="/articles/{{topArticle._id}}" class="text-blue-500">Xem chi tiết</a>
+            </div>
+            {{else}}
+            <p>Chưa có bài viết nào.</p>
+            {{/if}}
+        </div>
+    </div>
+
+</body>
+
+</html>

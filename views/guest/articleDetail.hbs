@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{article.title}}</title>
+    <link rel="stylesheet" href="../../public/css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+</head>
+<body>
+{{> header}}
+
+<div class="container mx-auto px-4 py-8">
+    <article class="mb-8 bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-3xl font-bold mb-4">{{article.title}}</h1>
+        <p class="text-gray-500 text-sm">Được đăng vào {{article.createdAtFormatted}}</p> <!-- Sử dụng field đã định dạng -->
+        <img src="{{article.thumbnail}}" alt="{{article.title}}" class="w-full h-64 object-cover rounded mt-4 mb-4">
+        <div class="content">
+            <p>{{article.content}}</p>
+        </div>
+        
+        <div class="tags mt-4">
+            {{#each article.tags}}
+                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2">{{this}}</span>
+            {{/each}}
+        </div>
+    </article>
+
+    <section class="comments-section mt-8">
+        <h3 class="text-2xl font-semibold mb-4">Bình luận</h3>
+        <ul id="comments-list" class="space-y-4">
+            {{#each comments}}
+                <li class="bg-gray-100 p-4 rounded-lg shadow">
+                    <p><strong>{{this.user_name}}:</strong> {{this.content}}</p>
+                    <p>Ngày tạo: {{this.created_at}}</p> <!-- Sửa từ article.createdAtFormatted sang this.created_at cho đúng -->
+                </li>
+            {{/each}}
+        </ul>
+
+        <form id="comment-form" class="mt-6">
+            <h4 class="font-semibold mb-2">Thêm bình luận</h4>
+            <textarea id="content" placeholder="Viết bình luận" class="w-full p-3 border border-gray-300 rounded mb-4" required></textarea>
+            <button type="submit" class="bg-blue-500 text-white p-3 rounded-lg">Gửi bình luận</button>
+        </form>
+    </section>
+</div>
+
+
+<script>
+    // Hàm fetch để lấy bình luận
+    async function fetchComments() {
+        const articleId = '{{article._id}}'; // Lấy article ID từ context
+        const response = await fetch(`/comments/article/${articleId}`);
+        const data = await response.json();
+        
+        const commentsList = document.getElementById('comments-list');
+        commentsList.innerHTML = ''; // Clear current comments
+        
+        data.comments.forEach(comment => {
+            const commentItem = document.createElement('li');
+            commentItem.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow');
+            commentItem.innerHTML = `
+                <p><strong>${comment.user_name}:</strong> ${comment.content}</p>
+                <small class="text-gray-500">${comment.created_at}</small>
+            `;
+            commentsList.appendChild(commentItem);
+        });
+    }
+
+    // Hàm gửi bình luận mới
+    document.getElementById('comment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const user_name = document.getElementById('user_name').value;
+        const content = document.getElementById('content').value;
+        const articleId = '{{article._id}}'; // Lấy article ID từ context
+        
+        await fetch('/comments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ articleId, user_name, content }),
+        });
+
+        // Sau khi gửi thành công, gọi lại hàm fetch để tải lại danh sách bình luận
+        fetchComments();
+    });
+
+    // Lấy và hiển thị bình luận khi tải trang
+    fetchComments();
+</script>
+
+</body>
+</html>

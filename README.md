@@ -1,6 +1,4 @@
 # web-final
-
-```
 newspaper-project/
 ├── controllers/
 │   ├── guestController.js
@@ -43,4 +41,3 @@ newspaper-project/
 ├── server.js
 ├── package.json
 └── README.md
-```

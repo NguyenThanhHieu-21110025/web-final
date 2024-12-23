@@ -6,20 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng Nhập</title>
     <link rel="stylesheet" href="../../public/css/login.css">
-    <link rel="stylesheet" href="../../public/css/header.css"> 
-    <link rel="stylesheet" href="../../public/css/footer.css">
 </head>
 
 <body>
-    {{> header}} <!-- Bao gồm phần header -->
     <main id="login-main">
         <h2>Đăng Nhập</h2>
-        
-        <!-- Form đăng nhập -->
+
         <form id="login-form">
             <div>
-                <label for="username">Tên người dùng:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required> <!-- Đổi từ username thành email -->
             </div>
 
             <div>
@@ -29,12 +25,26 @@
 
             <button type="submit">Đăng Nhập</button>
         </form>
+        <br>
+        <div class="social-login">
+            <p class="text-center">Hoặc đăng nhập với tài khoản mạng xã hội:</p>
+            <div class="social-buttons">
+                <!-- Đăng nhập với Facebook -->
+                <a href="http://localhost:8080/api/auth/facebook" class="social-button">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Facebook_f_logo_%282019%29.svg/800px-Facebook_f_logo_%282019%29.svg.png"
+                        alt="Facebook">
+                </a>
+
+                <!-- Đăng nhập với Google -->
+                <a href="http://localhost:8080/api/auth/google" class="social-button">
+                    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google">
+                </a>
+            </div>
+        </div>
 
         <!-- Thông báo lỗi hoặc thành công -->
         <p id="login-message"></p>
     </main>
-
-    {{> footer}} <!-- Bao gồm phần footer -->
 
     <script>
         // Lấy form và thêm sự kiện submit
@@ -43,12 +53,12 @@
             event.preventDefault(); // Ngăn chặn hành vi submit mặc định
 
             // Lấy dữ liệu từ form
-            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             // Tạo đối tượng dữ liệu
             const data = {
-                username,
+                email,
                 password
             };
 
@@ -66,6 +76,12 @@
                 if (response.ok) {
                     const result = await response.json();
                     document.getElementById('login-message').textContent = 'Đăng nhập thành công!';
+
+                    // Lưu accessToken vào localStorage hoặc sessionStorage nếu cần thiết
+                    localStorage.setItem('accessToken', result.accessToken);
+
+                    // Chuyển hướng người dùng đến trang chính hoặc trang profile
+                    window.location.href = '/guest/home';  // Thay thế '/' bằng URL bạn muốn chuyển hướng
                 } else {
                     const error = await response.json();
                     document.getElementById('login-message').textContent = `Lỗi: ${error.message}`;
@@ -75,6 +91,7 @@
                 document.getElementById('login-message').textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
             }
         });
+
     </script>
 </body>
 

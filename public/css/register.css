@@ -59,6 +59,41 @@
     font-weight: bold;
     text-align: center;
 }
+/* Định dạng cho container của các nút mạng xã hội */
+.social-buttons {
+    display: flex; /* Đặt layout thành Flexbox */
+    justify-content: center; /* Căn giữa các nút */
+    gap: 20px; /* Khoảng cách giữa các nút */
+    margin-top: 10px;
+}
+
+/* Định dạng chung cho nút */
+.social-button {
+    display: flex; /* Để căn giữa nội dung */
+    justify-content: center;
+    align-items: center;
+    width: 50px; /* Kích thước nút */
+    height: 50px;
+    border-radius: 50%; /* Làm nút tròn */
+    background-color: #f1f1f1; /* Màu nền (có thể thay đổi) */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    text-decoration: none; /* Xóa gạch dưới */
+}
+
+/* Định dạng logo bên trong nút */
+.social-button img {
+    width: 30px;
+    height: 30px;
+}
+
+/* Hiệu ứng khi di chuột */
+.social-button:hover {
+    transform: scale(1.1); /* Phóng to nút khi hover */
+    background-color: #e6e6e6; /* Thay đổi màu nền khi hover */
+}
+
+
 
 /* Responsive: Điều chỉnh kích thước màn hình nhỏ */
 @media screen and (max-width: 600px) {

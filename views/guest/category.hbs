@@ -2,37 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category - Electronic Newspaper</title>
-    <link rel="stylesheet" href="../../public/css/main.css">
+    <title>Danh mục</title>
+    <link rel="stylesheet" href="../../public/css/home.css">
+    <link rel="stylesheet" href="../../public/css/header.css">
+    <link rel="stylesheet" href="../../public/css/footer.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <header>
-        <!-- Menu -->
-        <nav>
-            <ul>
-                <li><a href="/guest/home">Home</a></li>
-                <li><a href="/guest/category/kinh-doanh-nong-san">Nông Sản</a></li>
-                <li><a href="/guest/category/kinh-doanh-hai-san">Hải Sản</a></li>
-                <!-- Add more menu items here -->
-            </ul>
-        </nav>
-    </header>
+{{> header}}
 
-    <main>
-        <section class="category-articles">
-            <h2>Articles in Category</h2>
-            {{#each articles}}
-                <article>
-                    <h3>{{this.title}}</h3>
-                    <p>Category: {{this.category}}</p>
-                    <p>Date: {{this.createdAt}}</p>
-                    <p>Tags: {{#each this.tags}}<span>{{this}}</span>{{/each}}</p>
-                    <img src="{{this.thumbnail}}" alt="{{this.title}}">
-                    <p>{{this.abstract}}</p>
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left Sidebar - Categories -->
+        <aside class="lg:col-span-3">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="font-bold mb-2">Danh mục</h3>
+                <a href="#" class="block text-blue-600 hover:text-blue-800 mb-3">Danh mục 1</a>
+                <a href="#" class="block text-blue-600 hover:text-blue-800 mb-3">Danh mục 2</a>
+                <a href="#" class="block text-blue-600 hover:text-blue-800 mb-3">Danh mục 3</a>
+                <a href="#" class="block text-blue-600 hover:text-blue-800 mb-3">Danh mục 4</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="lg:col-span-6">
+            <!-- Featured Article -->
+            <section>
+                <h2 class="text-xl font-bold mb-4">Bài Viết Nổi Bật</h2>
+                <article class="bg-white rounded-lg shadow mb-8">
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-5">
+                            <img src="/api/placeholder/400/300" alt="Featured article" class="w-full h-full object-cover">
+                        </div>
+                        <div class="col-span-7 p-4">
+                            <h3 class="text-xl mb-2">Title</h3>
+                            <p class="text-gray-600 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id.</p>
+                            <span class="text-gray-500 text-sm">Many hours ago</span>
+                        </div>
+                    </div>
                 </article>
-            {{/each}}
-        </section>
-    </main>
+
+                <!-- Empty Content Boxes -->
+                <div class="bg-white rounded-lg shadow mb-8 h-48"></div>
+                <div class="bg-white rounded-lg shadow mb-8 h-48"></div>
+
+                <!-- Most Viewed Article -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Bài viết xem nhiều nhất</h2>
+                    <article class="bg-white rounded-lg shadow">
+                        <div class="grid grid-cols-12 p-4">
+                            <div class="col-span-4">
+                                <img src="/api/placeholder/200/150" alt="Most viewed" class="w-full h-full object-cover">
+                            </div>
+                            <div class="col-span-8 pl-4">
+                                <h3 class="text-lg mb-2">Title</h3>
+                                <p class="text-gray-600 mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.</p>
+                                <span class="text-gray-500 text-sm">Many hours ago</span>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+        </main>
+
+        <!-- Right Sidebar - Latest Articles -->
+        <aside class="lg:col-span-3">
+            <h2 class="text-xl font-bold mb-4">Bài Viết Mới Nhất</h2>
+            <div class="space-y-4" id="latest-articles">
+                <!-- Latest Article Cards -->
+                <div class="bg-white rounded-lg shadow">
+                    <img src="/api/placeholder/400/300" alt="Latest article" class="w-full object-cover mb-2">
+                    <div class="p-4">
+                        <h3 class="font-semibold">Title</h3>
+                        <span class="text-gray-500 text-sm">Many hours ago</span>
+                    </div>
+                </div>
+                <!-- Repeat for remaining latest articles -->
+                <div class="bg-white rounded-lg shadow">
+                    <img src="/api/placeholder/400/300" alt="Latest article" class="w-full object-cover mb-2">
+                    <div class="p-4">
+                        <h3 class="font-semibold">Title</h3>
+                        <span class="text-gray-500 text-sm">Many hours ago</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow">
+                    <img src="/api/placeholder/400/300" alt="Latest article" class="w-full object-cover mb-2">
+                    <div class="p-4">
+                        <h3 class="font-semibold">Title</h3>
+                        <span class="text-gray-500 text-sm">Many hours ago</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow">
+                    <img src="/api/placeholder/400/300" alt="Latest article" class="w-full object-cover mb-2">
+                    <div class="p-4">
+                        <h3 class="font-semibold">Title</h3>
+                        <span class="text-gray-500 text-sm">Many hours ago</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Pagination - Now at the end before footer -->
+<div class="flex justify-center items-center gap-2 mt-8 mb-8">
+    <button class="p-2 border rounded hover:bg-gray-100">&lt;</button>
+    <button class="p-2 border rounded hover:bg-gray-100">1</button>
+    <button class="p-2 border rounded hover:bg-gray-100">2</button>
+    <span class="px-2">...</span>
+    <button class="p-2 border rounded hover:bg-gray-100">29</button>
+    <button class="p-2 border rounded hover:bg-gray-100">30</button>
+    <button class="p-2 border rounded hover:bg-gray-100">&gt;</button>
+</div>
+</div>
+
+{{> footer}}
+
+<script>
+    async function fetchCategoryArticles() {
+        try {
+            const response = await fetch('http://localhost:8080/guest/category/{{categoryId}}');
+            const data = await response.json();
+            displayCategoryArticles(data);
+        } catch (error) {
+            console.error('Error fetching category articles:', error);
+        }
+    }
+
+    function displayCategoryArticles(data) {
+        // Implementation will depend on your API response structure
+        console.log('Category data:', data);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchCategoryArticles);
+</script>
 </body>
 </html>
