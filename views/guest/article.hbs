@@ -4,85 +4,106 @@
     <meta charset="UTF-8">
     <title>Bài Viết</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 </head>
 <body>
-    {{> header}}
-    <main>
-        <article id="article-content">
-            <!-- Nội dung bài viết sẽ được thêm vào đây bằng JavaScript -->
-            <!-- lấy nội dung bài viết từ backend: tilte, summary -->
+{{> header}}
 
-            <!-- Hiển thị bình luận -->
-            <!-- fetch dữ liệu bình luận từ API khi trang được load --> 
-            fetchArticleData();
-            
-            <!-- Hiển thị form đăng bình luận -->
-            <form id="comment-form">
-                <label for="comment-name">Tên:</label>
-                <input type="text" id="comment-name" name="comment-name" required>
-        </article>
-        <section>
-            <h2>Bình Luận</h2>
-            <div id="comments-section">
-                <!-- Các bình luận sẽ được thêm vào đây bằng JavaScript -->
-                <!-- Lấy dữ liệu bình luận từ API khi trang được load --> 
-                
-                <!-- Thêm các bình luận vào section -->
-                 <!-- Hiển thị form đăng bình luận -->
-            <form id="comment-form">
-                <label for="comment-name">Tên:</label>
-                <input type="text" id="comment-name" name="comment-name" required>
-                <div class="comment">
-                    <p>Tên: John Doe</p>
+<div class="container mx-auto px-4 py-8">
+    <article class="bg-white rounded-lg shadow p-6" id="article-content">
+        <h1 class="text-3xl font-bold mb-2">Hà Nội phân luồng giao thông nhằm giảm ùn tắc cuối năm</h1>
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-yellow-500 font-semibold">Premium</span>
+            <span class="text-gray-500">Time here</span>
+        </div>
+        <img src="https://via.placeholder.com/600x300" alt="Hình minh họa" class="w-full h-64 object-cover rounded mb-4">
+        <p class="text-gray-700 mb-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris molestie elit, et lacinia ipsum quam nec dui.
+            Quisque nec mauris sit amet elit iaculis pretium sit amet quis magna. Aenean velit odio, elementum in tempus ut, vehicula eu diam. Pellentesque rhoncus aliquam mattis. Ut vulputate eros sed felis sodales nec vulputate justo hendrerit.
+            Viverra varius pretium ligula, a aliquam odio euismod sit amet. Quisque laoreet sem sit amet orci ullamcorper at ultricies metus viverra. Pellentesque arcu mauris, malesuada quis ornare accumsan, blandit sed diam.
+        </p>
+        <a href="#" class="text-blue-600 hover:underline">Tải về</a>
+    </article>
+
+    <div class="mt-8" id="comments-section">
+        <h2 class="text-xl font-bold mb-4">Comments (50)</h2>
+        <!-- Các bình luận sẽ được thêm vào đây -->
+        <div class="bg-white rounded-lg shadow p-4 mb-4">
+            <div class="flex items-center mb-2">
+                <span class="font-semibold">Ngoc Anh</span>
+                <span class="text-gray-500 text-sm ml-2">Comment time</span>
             </div>
-        </section>
-    </main>
-    {{> footer}}
-    
-    <script>
-        // Fetch dữ liệu bài viết từ API khi trang được load
-        async function fetchArticleData() {
-            const articleId = window.location.pathname.split('/').pop(); // Lấy ID bài viết từ URL
-            
-            try {
-                const response = await fetch(`http://localhost:8080/guest/article/${articleId}`);
-                const article = await response.json();
-                displayArticleData(article);
-            } catch (error) {
-                console.error('Error fetching article data:', error);
-            }
-        }
+            <p class="text-gray-700">Comment content lorem ispun…</p>
+        </div>
 
-        // Hiển thị dữ liệu bài viết và bình luận
-        function displayArticleData(article) {
-            const articleContent = document.getElementById('article-content');
-            const commentsSection = document.getElementById('comments-section');
-            
-            // Hiển thị nội dung bài viết
-            articleContent.innerHTML = `
-                <h1>${article.title}</h1>
-                <p>${article.date}</p>
-                <img src="${article.image}" alt="${article.title}">
-                <div>
-                    <h2>Nội Dung</h2>
-                    <p>${article.content}</p>
+        <div class="bg-white rounded-lg shadow p-4 mb-4">
+            <div class="flex items-center mb-2">
+                <span class="font-semibold">Ngoc Anh</span>
+                <span class="text-gray-500 text-sm ml-2">Comment time</span>
+            </div>
+            <p class="text-gray-700">Comment content lorem ispun…</p>
+        </div>
+        <!-- Thêm các bình luận khác tại đây -->
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-4 mt-4">
+        <h3 class="text-lg font-semibold mb-2">Ý kiến của bạn</h3>
+        <textarea class="w-full border rounded p-2 mb-4" rows="4" placeholder="Bạn nghĩ gì về bài viết này?"></textarea>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Gửi ý kiến</button>
+    </div>
+</div>
+
+{{> footer}}
+
+<script>
+    // Fetch dữ liệu bài viết từ API khi trang được load
+    async function fetchArticleData() {
+        const articleId = window.location.pathname.split('/').pop(); // Lấy ID bài viết từ URL
+
+        try {
+            const response = await fetch(`http://localhost:8080/guest/article/${articleId}`);
+            const article = await response.json();
+            displayArticleData(article);
+        } catch (error) {
+            console.error('Error fetching article data:', error);
+        }
+    }
+
+    // Hiển thị dữ liệu bài viết và bình luận
+    function displayArticleData(article) {
+        const articleContent = document.getElementById('article-content');
+        const commentsSection = document.getElementById('comments-section');
+
+        // Hiển thị nội dung bài viết
+        articleContent.innerHTML = `
+                <h1 class="text-3xl font-bold mb-2">${article.title}</h1>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-yellow-500 font-semibold">${article.type}</span>
+                    <span class="text-gray-500">${article.date}</span>
                 </div>
+                <img src="${article.image}" alt="${article.title}" class="w-full h-64 object-cover rounded mb-4">
+                <p class="text-gray-700 mb-4">${article.content}</p>
+                <a href="#" class="text-blue-600 hover:underline">Tải về</a>
             `;
-            
-            // Hiển thị các bình luận
-            article.comments.forEach(comment => {
-                const commentItem = document.createElement('div');
-                commentItem.classList.add('comment');
-                commentItem.innerHTML = `
-                    <p><strong>${comment.author}</strong> - ${comment.date}</p>
-                    <p>${comment.content}</p>
-                `;
-                commentsSection.appendChild(commentItem);
-            });
-        }
 
-        // Gọi hàm fetchArticleData khi trang được load
-        document.addEventListener('DOMContentLoaded', fetchArticleData);
-    </script>
+        // Hiển thị các bình luận
+        commentsSection.innerHTML = ''; // Xóa bình luận cũ
+        article.comments.forEach(comment => {
+            const commentItem = document.createElement('div');
+            commentItem.classList.add('bg-white', 'rounded-lg', 'shadow', 'p-4', 'mb-4');
+            commentItem.innerHTML = `
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold">${comment.author}</span>
+                        <span class="text-gray-500 text-sm ml-2">${comment.date}</span>
+                    </div>
+                    <p class="text-gray-700">${comment.content}</p>
+                `;
+            commentsSection.appendChild(commentItem);
+        });
+    }
+
+    // Gọi hàm fetchArticleData khi trang được load
+    document.addEventListener('DOMContentLoaded', fetchArticleData);
+</script>
 </body>
 </html>

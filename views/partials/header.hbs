@@ -1,40 +1,90 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang web của bạn</title>
-    <link rel="stylesheet" href="../../public/css/header.css">
-</head>
-<body>
-
-    <!-- Header -->
-    <header class="header">
-        <!-- Icon người dùng -->
-        <div class="user-icon" onclick="toggleUserMenu()">
-            <img src="user-icon.png" alt="User" />
+{{!-- header.hbs --}}
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <a href="#">
+                <img src="C:\Users\ASUS\Desktop\2024\web-final\img\logo.jpg" alt="Logo">
+            </a>
         </div>
-
-        <!-- Nút hamburger -->
-        <div class="hamburger-menu" onclick="toggleDropdownMenu()">
-            &#9776; <!-- Biểu tượng 3 dấu gạch -->
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/articles">Articles</a></li>
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/tags">Tags</a></li>
+            </ul>
+        </nav>
+        <div class="search-bar">
+            <form action="/search" method="GET">
+                <input type="text" name="query" placeholder="Type something...">
+                <button type="submit"><img src= "C:\Users\ASUS\Desktop\2024\web-final\img\search.png" alt="Search"></button>
+            </form>
         </div>
-
-        <!-- Dropdown menu -->
-        <div class="dropdown-menu" id="dropdown-menu">
-            <button class="menu-btn" onclick="location.href='/home';">Trang Chủ</button>
-            <button class="menu-btn" onclick="location.href='/categories';">Chuyên Mục</button>
-            <button class="menu-btn" onclick="location.href='/tags';">Nhãn</button>
+        <div class="profile-icon">
+            <a href="/profile">
+                <img src="C:\Users\ASUS\Desktop\2024\web-final\img\user.png" alt="Profile">
+            </a>
         </div>
+    </div>
+</header>
 
-        <!-- Menu người dùng -->
-        <div class="user-menu" id="user-menu">
-            <a href="/login">Đăng Nhập</a>
-            <a href="/register">Đăng Ký</a>
-        </div>
-    </header>
+<style>
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f4f4f4;
+        border-bottom: 1px solid #ccc;
+    }
 
-    <!-- Thêm script -->
-    <script src="../../public/assets/menu-toggle.js"></script>
-</body>
-</html>
+    .logo img {
+        height: 40px;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links li {
+        display: inline;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+    }
+
+    .search-bar {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        margin: 0 15px;
+    }
+
+    .search-bar input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .search-bar button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+
+    .search-bar button img {
+        height: 20px;
+    }
+
+    .profile-icon img {
+        height: 30px;
+    }
+</style>
