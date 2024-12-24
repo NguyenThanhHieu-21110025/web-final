@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{> meta}}
+</head>
+<body>
+{{> header}}
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Cột 8: Bài viết nổi bật và Bài viết xem nhiều nhất -->
+        <div class="md:col-span-8">
+            <!-- Bài viết nổi bật -->
+            <section class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 font-sans">Bài Viết Nổi Bật</h2>
+                {{#each articles}}
+                    <a class="my-2" href="{{../uri}}/article/{{_id}}">
+                        <div class="bg-white rounded-lg shadow p-4 flex my-2">
+                            <img loading="lazy" src="{{thumbnail}}" alt="Hình minh họa"
+                                 class="w-48 h-32 object-cover rounded mr-4" style="max-width: 12rem">
+                            <div class="px-3">
+                                <h3 class="font-semibold font-sans">{{title}}</h3>
+                                <p class="text-gray-700 mb-2 line-clamp-1 font-sans">{{summary}}</p>
+                                <span class="text-gray-500 text-sm font-sans">{{publishedAt}}</span>
+                                <div class="flex items-center my-2">
+                                    {{#each tags}}
+                                        <a class="mx-1 font-sans font-semibold drop-shadow-sm bg-white"
+                                           href="{{../../uri}}/article/tag/{{this}}">{{this}}</a>
+                                    {{/each}}
+                                </div>
+                                {{#if isPremium}}
+                                    <span class="text-white font-sans font-semibold  text-sm bg-yellow-400 px-2 py-0.5 rounded">Premium</span>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </a>
+                {{/each}}
+            </section>
+
+            <div class="flex justify-center items-center gap-2 mt-8 mb-8">
+                <a href="?page={{paginate.page}}" class="p-2 border rounded hover:bg-gray-100">&lt;</a>
+                {{#each paginate.pages}}
+                    <a href="?page={{this}}" class="p-2 border rounded hover:bg-gray-100">{{this}}</a>
+                {{/each}}
+                <a href="?page={{paginate.page }}" class="p-2 border rounded hover:bg-gray-100">&gt;</a>
+            </div>
+        </div>
+
+        <!-- Cột 4: Bài viết mới nhất -->
+        <div class="md:col-span-4">
+            <section>
+                <h2 class="text-xl font-bold mb-4">Bài Viết Mới Nhất</h2>
+                {{#each mostViewedArticles}}
+                    <a class="my-2" href="{{../uri}}/article/{{_id}}">
+                        <div class="bg-white rounded-lg shadow p-4 mb-4">
+                            <h3 class="font-semibold">{{title}}</h3>
+                            <img loading="lazy" src="{{thumbnail}}" alt="Hình minh họa"
+                                 class="w-full h-32 object-cover rounded mb-2">
+                            <span class="text-gray-500 text-sm font-sans">{{publishedAt}}</span>
+                            <p class="text-gray-700 mb-2 line-clamp-1 font-sans">{{summary}}</p>
+                            <div class="flex items-center my-2">
+                                {{#each tags}}
+                                    <a class="mx-1 font-sans font-semibold drop-shadow-sm bg-white"
+                                       href="{{../../uri}}/aticle/tag/{{this}}">{{this}}</a>
+                                {{/each}}
+                            </div>
+                            {{#if isPremium}}
+                                <span class="text-white font-sans font-semibold  text-sm bg-yellow-400 px-2 py-0.5 rounded">Premium</span>
+                            {{/if}}
+                        </div>
+                    </a>
+                {{/each}}
+            </section>
+        </div>
+    </div>
+</div>
+
+{{> footer}}
+</body>
+</html>

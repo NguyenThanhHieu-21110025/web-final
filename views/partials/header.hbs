@@ -47,9 +47,10 @@
             </ul>
         </nav>
         <div class="search-bar">
-            <form class="flex items-center" action="/search" method="GET">
-                <input class="mx-2" type="text" name="query" placeholder="Type something...">
-                <button type="submit"><img width="24" src="/public/img/search.png" alt="Search">
+            <form class="flex items-center" action="http://localhost:8080/guest/article-search" method="GET">
+                <input class="mx-2 text-black" type="text" name="query" placeholder="Type something...">
+                <button type="submit">
+                    <img width="24" src="/public/img/search.png" alt="Search">
                 </button>
             </form>
         </div>
