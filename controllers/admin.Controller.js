@@ -3,12 +3,11 @@ const Article = require('../models/articleModel');
 const Category = require('../models/categoryModel');
 const Tag = require('../models/tagModel');
 
-// Quản lý người dùng (Xem danh sách, xem chi tiết)
 const adminController = {
     getUsers: async (req, res) => {
         try {
             const users = await User.find();
-            res.status(200).json(users);
+            res.render('userList', { title: 'Danh sách người dùng', users: users });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -24,7 +23,6 @@ const adminController = {
         }
     },
 
-    // Thêm người dùng
     addUser: async (req, res) => {
         try {
             const newUser = new User(req.body);
@@ -35,7 +33,6 @@ const adminController = {
         }
     },
 
-    // Cập nhật người dùng
     updateUser: async (req, res) => {
         try {
             const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -46,7 +43,6 @@ const adminController = {
         }
     },
 
-    // Xoá người dùng
     deleteUser: async (req, res) => {
         try {
             const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -57,11 +53,23 @@ const adminController = {
         }
     },
 
-    // Quản lý bài viết (Cập nhật trạng thái bài viết)
+    renderUsers: async (req, res) => {
+        try {
+            const users = await User.find();
+            res.render('admin/users', { title: 'Quản lý người dùng', users });
+        } catch (error) {
+            res.status(500).send('Lỗi khi tải trang người dùng.');
+        }
+    },
+
     getArticles: async (req, res) => {
         try {
-            const articles = await Article.find();
-            res.status(200).json(articles);
+            const articles = await Article.find()
+                .populate('category', 'category_name') 
+                .populate('author', 'username') 
+                .lean(); 
+
+            res.status(200).json(articles);  
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -72,35 +80,91 @@ const adminController = {
             const article = await Article.findById(req.params.id);
             if (!article) return res.status(404).json({ message: 'Article not found' });
 
-            article.status = req.body.status; // Trạng thái có thể là 'draft' hoặc 'published'
+            if (!['draft', 'pending', 'published', 'denied'].includes(req.body.status)) {
+                return res.status(400).json({ message: 'Invalid status' });
+            }
+
+            article.status = req.body.status; 
+            article.updatedAt = Date.now(); 
             await article.save();
+
             res.status(200).json(article);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    // Quản lý category
+    renderArticles: async (req, res) => {
+        try {
+            const articles = await Article.find()
+                .populate('category', 'category_name')  
+                .populate('author', 'username')  
+                .lean();  
+            console.log(articles); 
+
+            res.render('admin/articles', {
+                title: 'Quản lý bài viết',
+                articles,
+
+            });
+        } catch (error) {
+            console.error(error); 
+            res.status(500).send('Lỗi khi tải trang bài viết.');  
+        }
+    },
+
     getCategories: async (req, res) => {
         try {
-            const categories = await Category.find();
-            res.status(200).json(categories);
+            const categories = await Category.find()
+                .populate('parentId', 'category_name') 
+
+            const categoriesWithArticleCount = await Promise.all(categories.map(async (category) => {
+                const articleCount = await Article.countDocuments({ categoryId: category._id });
+                return { ...category, articleCount }; 
+            }));
+
+            res.status(200).json({
+                message: 'Danh sách chuyên mục',
+                categories: categoriesWithArticleCount
+            });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
+
 
     addCategory: async (req, res) => {
         try {
-            const newCategory = new Category(req.body);
+            const { category_name, parentId } = req.body;
+
+            if (!category_name) {
+                return res.status(400).json({ message: 'Tên chuyên mục là bắt buộc' });
+            }
+
+            const newCategory = new Category({
+                category_name,
+                parentId
+            });
+
             await newCategory.save();
-            res.status(201).json(newCategory);
+            res.status(201).json({
+                message: 'Chuyên mục đã được thêm thành công',
+                category: newCategory
+            });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    // Quản lý tag
+    renderCategories: async (req, res) => {
+        try {
+            const categories = await Category.find();
+            res.render('admin/categories', { title: 'Quản lý chuyên mục', categories });
+        } catch (error) {
+            res.status(500).send('Lỗi khi tải trang chuyên mục.');
+        }
+    },
+
     getTags: async (req, res) => {
         try {
             const tags = await Tag.find();
@@ -120,13 +184,21 @@ const adminController = {
         }
     },
 
-    // Phân công chuyên mục cho biên tập viên
+    renderTags: async (req, res) => {
+        try {
+            const tags = await Tag.find();
+            res.render('admin/tags', { title: 'Quản lý nhãn tag', tags });
+        } catch (error) {
+            res.status(500).send('Lỗi khi tải trang tag.');
+        }
+    },
+
     assignCategoryToEditor: async (req, res) => {
         try {
             const editor = await User.findById(req.params.editorId);
             if (!editor || editor.role !== 'editor') return res.status(404).json({ message: 'Editor not found' });
 
-            editor.categories = req.body.categories; // Chỉ định các chuyên mục cho biên tập viên
+            editor.categories = req.body.categories;
             await editor.save();
             res.status(200).json(editor);
         } catch (error) {
@@ -134,7 +206,6 @@ const adminController = {
         }
     },
 
-    // Gia hạn tài khoản độc giả
     extendSubscription: async (req, res) => {
         try {
             const user = await User.findById(req.params.id);
@@ -147,6 +218,103 @@ const adminController = {
             res.status(500).json({ message: error.message });
         }
     },
+
+    renderDashboard: async (req, res) => {
+        try {
+            const approvedPostsCount = await Article.countDocuments({ status: 'approved' });
+            const pendingPostsCount = await Article.countDocuments({ status: 'pending' });
+            const categoriesCount = await Category.countDocuments();
+            const tagsCount = await Tag.countDocuments();
+            const usersCount = await User.countDocuments();
+
+            const recentArticles = await Article.find({ status: 'pending' }).limit(5);  
+
+            res.render('admin/dashboard', {
+                title: 'Dashboard',
+                approvedPostsCount,
+                pendingPostsCount,
+                categoriesCount,
+                tagsCount,
+                usersCount,
+                recentArticles 
+            });
+        } catch (error) {
+            res.status(500).send('Error rendering dashboard');
+        }
+    },
+
+    renderProfile: (req, res) => {
+        res.render('admin/profile', { title: 'Cập nhật tài khoản', user: req.user });
+    },
+    getPendingArticles: async (req, res) => {
+        try {
+            const pendingArticles = await Article.find({ status: 'pending' });
+            res.render('admin/articles', {
+                title: 'Articles Pending Review',
+                recentArticles: pendingArticles,
+                approvedPostsCount: await Article.countDocuments({ status: 'approved' }),
+                pendingPostsCount: pendingArticles.length,
+                categoriesCount: 10, 
+                tagsCount: 5, 
+                usersCount: 100 
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Error while fetching pending articles.');
+        }
+    },
+
+    publishArticle: async (req, res) => {
+        const { id } = req.params;
+        try {
+            await Article.findByIdAndUpdate(id, { status: 'published' });
+            res.redirect('/admin/articles');
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Error while updating the article.');
+        }
+    },
+    denyArticle: async (req, res) => {
+        const { id } = req.params;
+        try {
+            await Article.findByIdAndUpdate(id, { status: 'denied' });
+            res.redirect('/admin/articles');
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Error while updating the article.');
+        }
+    },
+    renderPendingArticles: async (req, res) => {
+        try {
+            const pendingArticles = await Article.find({ status: 'pending' });
+            res.render('admin/articles', {
+                title: 'Bài viết chờ duyệt',
+                articles: pendingArticles,
+            });
+        } catch (error) {
+            res.status(500).send('Lỗi khi tải bài viết chờ duyệt.');
+        }
+    },
+    getArticleById: async (req, res) => {
+        try {
+            const articleId = req.params.id;
+            
+            const article = await Article.findById(articleId)
+                .populate('category', 'category_name') 
+                .populate('author', 'username') 
+                .lean(); 
+    
+            if (!article) {
+                return res.status(404).json({ message: 'Bài viết không tồn tại' });
+            }
+    
+            res.status(200).json(article);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+
 };
 
 module.exports = adminController;
