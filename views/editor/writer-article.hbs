@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden { display: none; }
+        .custom-file-upload {
+            display: inline-block;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px 16px;
+            color: white;
+            background-color: #5e656a;
+            border-radius: 4px;
+            border: none;
+            margin-top: 10px;
+        }
+        .custom-file-upload:hover {
+            background-color: #5e656a;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Quản lý bài viết</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light vh-100">
+            <div class="py-4 text-center">
+                <img src="https://via.placeholder.com/100" class="rounded-circle" alt="Profile Picture">
+                <h5 class="mt-3">{{user.name}}</h5>
+                <p>Editor</p>
+            </div>
+            <ul class="nav flex-column px-3">
+                <li class="nav-item mb-3">
+                    <a class="nav-link active" href="#" id="manageArticles">Quản lý bài viết</a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a class="nav-link" href="#" id="viewProfile">Thông tin cá nhân</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="#">Đăng xuất</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Article Management -->
+            <div id="articleManagement">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">Bài chờ duyệt</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">Bài đã duyệt</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">Bài bị từ chối</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content mt-3" id="myTabContent">
+                    <!-- Pending Tab -->
+                    <div class="tab-pane fade show active" id="pending" role="tabpanel">
+                        {{#each pendingArticles}}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{this.title}}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">Thời gian: {{this.time}}</small><br>
+                                        <small class="text-muted">Tác giả: {{this.author}}</small>
+                                    </p>
+                                    <button class="btn btn-success btn-sm">Duyệt</button>
+                                    <button class="btn btn-danger btn-sm">Từ chối</button>
+                                    <button class="btn btn-warning btn-sm" onclick="openEditForm('{{this.id}}')">Hiệu chỉnh</button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+
+                    <!-- Approved Tab -->
+                    <div class="tab-pane fade" id="approved" role="tabpanel">
+                        {{#each approvedArticles}}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{this.title}}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">Thời gian: {{this.time}}</small><br>
+                                        <small class="text-muted">Tác giả: {{this.author}}</small>
+                                    </p>
+                                    <button class="btn btn-primary btn-sm">Xem chi tiết</button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+
+                    <!-- Rejected Tab -->
+                    <div class="tab-pane fade" id="rejected" role="tabpanel">
+                        {{#each rejectedArticles}}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{this.title}}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">Thời gian: {{this.time}}</small><br>
+                                        <small class="text-muted">Lý do từ chối: {{this.reason}}</small>
+                                    </p>
+                                    <button class="btn btn-warning btn-sm" onclick="openEditForm('{{this.id}}')">Hiệu chỉnh</button>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Article Form -->
+            <div id="editArticleForm" class="hidden">
+                <h4 class="mt-3">Chỉnh sửa bài viết</h4>
+                <form>
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="editTitle" placeholder="Nhập tiêu đề bài viết">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSummary" class="form-label">Tóm tắt</label>
+                        <textarea class="form-control" id="editSummary" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editContent" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="editContent" rows="5"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCategory" class="form-label">Chuyên mục</label>
+                        <select class="form-select" id="editCategory">
+                            {{#each categories}}
+                                <option value="{{this.id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTags" class="form-label">Nhãn</label>
+                        <input type="text" class="form-control" id="editTags" placeholder="Nhập các nhãn, cách nhau bằng dấu phẩy">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editThumbnail" class="form-label">Ảnh minh họa</label>
+                        <input type="file" class="form-control" id="editThumbnail">
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </form>
+            </div>
+
+            <!-- Profile Info -->
+            <div id="profileInfo" class="hidden">
+                <h4 class="mt-3 text-center">Thông tin cá nhân</h4>
+                <div class="text-center mb-4">
+                    <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="Profile Picture">
+                    <label class="custom-file-upload">
+                        <input type="file" accept="image/png, image/jpeg" id="profilePicture" style="display: none;">
+                        Chọn ảnh
+                    </label>
+                </div>
+                <form>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="username" value="{{user.username}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="{{user.email}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phone" value="{{user.phone}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="password" value="{{user.password}}">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Cập nhật</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const manageArticlesButton = document.getElementById('manageArticles');
+    const viewProfileButton = document.getElementById('viewProfile');
+    const profileInfo = document.getElementById('profileInfo');
+    const articleManagement = document.getElementById('articleManagement');
+    const editArticleForm = document.getElementById('editArticleForm');
+
+    manageArticlesButton.addEventListener('click', () => {
+        profileInfo.classList.add('hidden');
+        editArticleForm.classList.add('hidden');
+        articleManagement.classList.remove('hidden');
+    });
+
+    viewProfileButton.addEventListener('click', () => {
+        articleManagement.classList.add('hidden');
+        editArticleForm.classList.add('hidden');
+        profileInfo.classList.remove('hidden');
+    });
+
+    function openEditForm(articleId) {
+        articleManagement.classList.add('hidden');
+        editArticleForm.classList.remove('hidden');
+        // Populate form with article data here if needed
+    }
+
+    function cancelEdit() {
+        editArticleForm.classList.add('hidden');
+        articleManagement.classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
