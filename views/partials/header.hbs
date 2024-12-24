@@ -1,27 +1,61 @@
 {{!-- header.hbs --}}
-<header>
-    <div class="header-container">
+<style>
+    .dropdown:hover > .dropdown-content {
+        display: block;
+    }
+</style>
+<header class="" style="background-color: #f4f4f4">
+    <div class="header-container container mx-auto" style="border: none">
         <div class="logo">
-            <a href="#">
-                <img src="C:\Users\ASUS\Desktop\2024\web-final\img\logo.jpg" alt="Logo">
+            <a href="http://localhost:8080/guest/home">
+                <img src="/public/img/logo.jpg" alt="Logo">
             </a>
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="/articles">Articles</a></li>
-                <li><a href="/categories">Categories</a></li>
+                <li><a href="http://localhost:8080/guest/home">Articles</a></li>
+                <li>
+                    <div class="dropdown inline-block relative">
+                        <button class="text-gray-700 inline-flex items-center">
+                            <span>Categories</span>
+                        </button>
+                        <ul style="width: 150px"
+                            class="dropdown-content bg-gray-200 px-3 rounded absolute hidden text-gray-700">
+                            {{#each allCategory}}
+                                <!-- If category has children -->
+                                {{#if children.length}}
+                                    <li class="dropdown">
+                                        <a class="block whitespace-no-wrap">{{this.parentName}}</a>
+                                        <!-- Child items dropdown -->
+                                        <ul style="width: 150px; margin-left: 7rem"
+                                            class="bg-gray-200 px-3 dropdown-content absolute hidden text-gray-700 pl-5 -mt-10">
+                                            {{#each this.children}}
+                                                <li><a class="block whitespace-no-wrap"
+                                                       href="http://localhost:8080/guest/category/{{_id}}">{{this.category_name}}</a>
+                                                </li>
+                                            {{/each}}
+                                        </ul>
+                                    </li>
+                                {{else}}
+                                    <li><a class="block whitespace-no-wrap" href="#">{{this.parentName}}</a></li>
+                                {{/if}}
+                            {{/each}}
+                        </ul>
+                    </div>
+                </li>
                 <li><a href="/tags">Tags</a></li>
             </ul>
         </nav>
         <div class="search-bar">
-            <form action="/search" method="GET">
-                <input type="text" name="query" placeholder="Type something...">
-                <button type="submit"><img src= "C:\Users\ASUS\Desktop\2024\web-final\img\search.png" alt="Search"></button>
+            <form class="flex items-center" action="/search" method="GET">
+                <input class="mx-2" type="text" name="query" placeholder="Type something...">
+                <button type="submit"><img width="24" src="/public/img/search.png" alt="Search">
+                </button>
             </form>
         </div>
         <div class="profile-icon">
             <a href="/profile">
-                <img src="C:\Users\ASUS\Desktop\2024\web-final\img\user.png" alt="Profile">
+                <img src="/public/img/user.png" alt="Profile">
             </a>
         </div>
     </div>
