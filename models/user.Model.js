@@ -55,18 +55,6 @@ const UserSchema = new Schema({
   subscription_expiry: {
     type: Date,
   },
-  refreshTokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
-      expiresAt: {
-        type: Date,
-        required: true,
-      },
-    },
-  ],
   isVerified: {
     // Trường xác thực email
     type: Boolean,
