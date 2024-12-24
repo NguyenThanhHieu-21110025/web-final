@@ -1,4 +1,3 @@
-const middlewareController = require("../middleware/auth.Middleware");
 const {
     editArticle,
     getAllWriterArticle,
@@ -9,11 +8,11 @@ const {
 
 const router = require("express").Router();
 // api routes
-router.get("/get-all-article", middlewareController.verifyToken, getAllWriterArticle);
-router.put("/edit-article/:id", middlewareController.verifyToken, editArticle);
-router.put("/verify-article/:id", middlewareController.verifyToken, verifyArticle);
-router.delete("/denied-article/:id", middlewareController.verifyToken, deniedArticle);
+router.get("/get-all-article",  getAllWriterArticle);
+router.put("/edit-article/:id",  editArticle);
+router.put("/verify-article/:id",  verifyArticle);
+router.delete("/denied-article/:id",  deniedArticle);
 // view routes
-router.get("/writer-article", middlewareController.isAuthenticated, allWriterArticleView);
+router.get("/writer-article",  allWriterArticleView);
 // NOTE  : u can add your custom view here
 module.exports = router;
