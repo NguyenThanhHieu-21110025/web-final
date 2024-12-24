@@ -18,7 +18,7 @@ const mediaRoutes = require("./routes/media.Route");
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.json());
-app.use(morgan("combined"));
+// app.use(morgan("combined"));
 const dbURI = process.env.MONGODB_ALATS_URI;
 
 if (!dbURI) {
