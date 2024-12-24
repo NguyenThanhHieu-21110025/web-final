@@ -15,6 +15,8 @@ const writerRouters = require("./routes/writerRoutes");
 const CommentRoutes = require("./routes/comment.Route");
 const tagsRoutes = require("./routes/tag.Route");
 const mediaRoutes = require("./routes/media.Route");
+const adminRoutes = require("./routes/adminRoutes");
+
 const session = require('express-session');
 
 app.use(express.json());
