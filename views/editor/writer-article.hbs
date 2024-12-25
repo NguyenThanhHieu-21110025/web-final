@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.css" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .hidden { display: none; }
+        .hidden {
+            display: none;
+        }
+
         .custom-file-upload {
             display: inline-block;
             cursor: pointer;
@@ -18,17 +22,19 @@
             border: none;
             margin-top: 10px;
         }
+
         .custom-file-upload:hover {
             background-color: #5e656a;
         }
     </style>
 </head>
-<body>
+<body style="height: 100vh;overflow: hidden">
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Quản lý bài viết</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand fs-4 fw-bold" href="#">Quản lý bài viết</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -40,7 +46,7 @@
         <div class="col-md-3 bg-light vh-100">
             <div class="py-4 text-center">
                 <img src="https://via.placeholder.com/100" class="rounded-circle" alt="Profile Picture">
-                <h5 class="mt-3">{{user.name}}</h5>
+                <h5 class="mt-3">{{user.email}}</h5>
                 <p>Editor</p>
             </div>
             <ul class="nav flex-column px-3">
@@ -63,72 +69,78 @@
                 <!-- Tabs -->
                 <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">Bài chờ duyệt</button>
+                        <a href="http://localhost:8080/editor/profile?tab=pendingArticles" class="nav-link"
+                           type="button" role="tab">Bài chờ duyệt
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">Bài đã duyệt</button>
+                        <a href="http://localhost:8080/editor/profile?tab=approvedArticles" class="nav-link"
+                           type="button" role="tab">Bài đã duyệt
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">Bài bị từ chối</button>
+                        <a class="nav-link" href="http://localhost:8080/editor/profile?tab=rejectedArticles"
+                           type="button" role="tab">Bài bị từ chối
+                        </a>
                     </li>
                 </ul>
 
                 <!-- Tab Content -->
                 <div class="tab-content mt-3" id="myTabContent">
                     <!-- Pending Tab -->
-                    <div class="tab-pane fade show active" id="pending" role="tabpanel">
-                        {{#each pendingArticles}}
+                    <div class="tab-pane fade show active" style="height: 80vh;overflow-y: scroll" id="pending"
+                         role="tabpanel">
+                        {{#each articles}}
                             <div class="card mb-3">
                                 <div class="card-body">
+                                    <img src="{{thumbnail}}" width="128" height="128">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">
-                                        <small class="text-muted">Thời gian: {{this.time}}</small><br>
-                                        <small class="text-muted">Tác giả: {{this.author}}</small>
+                                        <small class="text-muted">Thời gian: {{this.createdAt}}</small><br>
+                                        <small class="text-muted">Tác giả: {{this.author.email}}</small>
                                     </p>
-                                    <button class="btn btn-success btn-sm">Duyệt</button>
-                                    <button class="btn btn-danger btn-sm">Từ chối</button>
-                                    <button class="btn btn-warning btn-sm" onclick="openEditForm('{{this.id}}')">Hiệu chỉnh</button>
+                                    {{#if ../actions.canPublish}}
+                                        <a href="http://localhost:8080/editor/verify-article/{{_id}}"
+                                           class="btn btn-success btn-sm">Duyệt</a>
+                                    {{/if}}
+                                    {{#if ../actions.canDenied}}
+                                        <button onclick="openDeniedForm('{{_id}}')" class="btn btn-danger btn-sm">
+                                            <span>Từ chối</span>
+                                        </button>
+                                        <div class="d-none" id="denied-form"
+                                             style="display: flex;flex-direction: column;left: 10%;bottom:-50%;background-color: white;box-shadow: 1px 1px 10px black;border-radius: 5px;width: 250px;height: 150px;padding: 8px 12px;position: absolute;z-index: 10">
+                                                <textarea id="reason" placeholder="Nhập lý do từ chối"
+                                                          style=";width: 100%;height: 100%;background-color: white"></textarea>
+                                            <button onclick="handleDenied('{{_id}}')" class="btn btn-danger mt-2">Gửi
+                                            </button>
+                                        </div>
+                                    {{/if}}
+                                    {{#if ../actions.canEdit}}
+                                        <button class="btn btn-warning btn-sm" onclick="openEditForm('{{this.id}}')">
+                                            Hiệu
+                                            chỉnh
+                                        </button>
+                                    {{/if}}
+                                    {{#if ../actions.viewInfo}}
+                                        <a href="http://localhost:8080/guest/article/{{this._id}}"
+                                           class="btn btn-primary btn-sm">Xem chi tiết</a>
+                                    {{/if}}
                                 </div>
                             </div>
                         {{/each}}
                     </div>
-
-                    <!-- Approved Tab -->
-                    <div class="tab-pane fade" id="approved" role="tabpanel">
-                        {{#each approvedArticles}}
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{this.title}}</h5>
-                                    <p class="card-text">
-                                        <small class="text-muted">Thời gian: {{this.time}}</small><br>
-                                        <small class="text-muted">Tác giả: {{this.author}}</small>
-                                    </p>
-                                    <button class="btn btn-primary btn-sm">Xem chi tiết</button>
-                                </div>
-                            </div>
+                    <div class="flex justify-center items-center gap-2 mt-8 mb-8">
+                        <a href="?page={{paginate.page}}" class="p-2 border rounded hover:bg-gray-100">&lt;</a>
+                        {{#each paginate.pages}}
+                            <a href="?page={{this}}" class="p-2 border rounded hover:bg-gray-100">{{this}}</a>
                         {{/each}}
-                    </div>
-
-                    <!-- Rejected Tab -->
-                    <div class="tab-pane fade" id="rejected" role="tabpanel">
-                        {{#each rejectedArticles}}
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{this.title}}</h5>
-                                    <p class="card-text">
-                                        <small class="text-muted">Thời gian: {{this.time}}</small><br>
-                                        <small class="text-muted">Lý do từ chối: {{this.reason}}</small>
-                                    </p>
-                                    <button class="btn btn-warning btn-sm" onclick="openEditForm('{{this.id}}')">Hiệu chỉnh</button>
-                                </div>
-                            </div>
-                        {{/each}}
+                        <a href="?page={{paginate.page }}" class="p-2 border rounded hover:bg-gray-100">&gt;</a>
                     </div>
                 </div>
             </div>
 
             <!-- Edit Article Form -->
-            <div id="editArticleForm" class="hidden">
+            <div id="editArticleForm" class="hidden" style="overflow:scroll;height: 90vh">
                 <h4 class="mt-3">Chỉnh sửa bài viết</h4>
                 <form>
                     <div class="mb-3">
@@ -146,14 +158,15 @@
                     <div class="mb-3">
                         <label for="editCategory" class="form-label">Chuyên mục</label>
                         <select class="form-select" id="editCategory">
-                            {{#each categories}}
-                                <option value="{{this.id}}">{{this.name}}</option>
+                            {{#each allChildCate}}
+                                <option value="{{this._id}}">{{this.category_name}}</option>
                             {{/each}}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="editTags" class="form-label">Nhãn</label>
-                        <input type="text" class="form-control" id="editTags" placeholder="Nhập các nhãn, cách nhau bằng dấu phẩy">
+                        <input type="text" class="form-control" id="editTags"
+                               placeholder="Nhập các nhãn, cách nhau bằng dấu phẩy">
                     </div>
                     <div class="mb-3">
                         <label for="editThumbnail" class="form-label">Ảnh minh họa</label>
@@ -169,10 +182,6 @@
                 <h4 class="mt-3 text-center">Thông tin cá nhân</h4>
                 <div class="text-center mb-4">
                     <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="Profile Picture">
-                    <label class="custom-file-upload">
-                        <input type="file" accept="image/png, image/jpeg" id="profilePicture" style="display: none;">
-                        Chọn ảnh
-                    </label>
                 </div>
                 <form>
                     <div class="mb-3">
@@ -197,9 +206,256 @@
         </div>
     </div>
 </div>
-
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/44.1.0/ckeditor5.umd.js" crossorigin></script>
+<script src="https://cdn.ckbox.io/ckbox/2.6.1/ckbox.js" crossorigin></script>
 <script>
+    //for editor
+    const {
+        ClassicEditor,
+        Autoformat,
+        AutoImage,
+        Autosave,
+        BlockQuote,
+        Bold,
+        CKBox,
+        CKBoxImageEdit,
+        CloudServices,
+        Essentials,
+        Heading,
+        ImageBlock,
+        ImageCaption,
+        ImageInline,
+        ImageInsert,
+        ImageInsertViaUrl,
+        ImageResize,
+        ImageStyle,
+        ImageTextAlternative,
+        ImageToolbar,
+        ImageUpload,
+        Indent,
+        IndentBlock,
+        Italic,
+        Link,
+        LinkImage,
+        List,
+        ListProperties,
+        MediaEmbed,
+        Paragraph,
+        PasteFromOffice,
+        PictureEditing,
+        Table,
+        TableCaption,
+        TableCellProperties,
+        TableColumnResize,
+        TableProperties,
+        TableToolbar,
+        TextTransformation,
+        TodoList,
+        Underline
+    } = window.CKEDITOR;
+    const LICENSE_KEY =
+            'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MzYzODA3OTksImp0aSI6ImM1YjQwZGVlLTQxODktNDA5Yy1iNjFjLWU4OGJmZWUyMzk4NyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjFiNzU2ODBkIn0.1a-XXtnxehBLc8skowkIBOdfCA1Iq2G64c_NevPLZGW-jBk4VTLTfrtZ2FTpQDvHh3PyagggdyGGbPLWGMOmbQ';
+    const CLOUD_SERVICES_TOKEN_URL =
+            'https://6i0xf99ost25.cke-cs.com/token/dev/90e2899b075b98d7078bbe03998191b5587a3529b1735deb935cb5d6fbf9?limit=10';
+    const editorConfig = {
+        toolbar: {
+            items: [
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'underline',
+                '|',
+                'link',
+                'insertImage',
+                'ckbox',
+                'mediaEmbed',
+                'insertTable',
+                'blockQuote',
+                '|',
+                'bulletedList',
+                'numberedList',
+                'todoList',
+                'outdent',
+                'indent'
+            ],
+            shouldNotGroupWhenFull: false
+        },
+        plugins: [
+            Autoformat,
+            AutoImage,
+            Autosave,
+            BlockQuote,
+            Bold,
+            CKBox,
+            CKBoxImageEdit,
+            CloudServices,
+            Essentials,
+            Heading,
+            ImageBlock,
+            ImageCaption,
+            ImageInline,
+            ImageInsert,
+            ImageInsertViaUrl,
+            ImageResize,
+            ImageStyle,
+            ImageTextAlternative,
+            ImageToolbar,
+            ImageUpload,
+            Indent,
+            IndentBlock,
+            Italic,
+            Link,
+            LinkImage,
+            List,
+            ListProperties,
+            MediaEmbed,
+            Paragraph,
+            PasteFromOffice,
+            PictureEditing,
+            Table,
+            TableCaption,
+            TableCellProperties,
+            TableColumnResize,
+            TableProperties,
+            TableToolbar,
+            TextTransformation,
+            TodoList,
+            Underline
+        ],
+        cloudServices: {
+            tokenUrl: CLOUD_SERVICES_TOKEN_URL
+        },
+        heading: {
+            options: [
+                {
+                    model: 'paragraph',
+                    title: 'Paragraph',
+                    class: 'ck-heading_paragraph'
+                },
+                {
+                    model: 'heading1',
+                    view: 'h1',
+                    title: 'Heading 1',
+                    class: 'ck-heading_heading1'
+                },
+                {
+                    model: 'heading2',
+                    view: 'h2',
+                    title: 'Heading 2',
+                    class: 'ck-heading_heading2'
+                },
+                {
+                    model: 'heading3',
+                    view: 'h3',
+                    title: 'Heading 3',
+                    class: 'ck-heading_heading3'
+                },
+                {
+                    model: 'heading4',
+                    view: 'h4',
+                    title: 'Heading 4',
+                    class: 'ck-heading_heading4'
+                },
+                {
+                    model: 'heading5',
+                    view: 'h5',
+                    title: 'Heading 5',
+                    class: 'ck-heading_heading5'
+                },
+                {
+                    model: 'heading6',
+                    view: 'h6',
+                    title: 'Heading 6',
+                    class: 'ck-heading_heading6'
+                }
+            ]
+        },
+        image: {
+            toolbar: [
+                'toggleImageCaption',
+                'imageTextAlternative',
+                '|',
+                'imageStyle:inline',
+                'imageStyle:wrapText',
+                'imageStyle:breakText',
+                '|',
+                'resizeImage',
+                '|',
+                'ckboxImageEdit'
+            ]
+        },
+        licenseKey: LICENSE_KEY,
+        link: {
+            addTargetToExternalLinks: true,
+            defaultProtocol: 'https://',
+            decorators: {
+                toggleDownloadable: {
+                    mode: 'manual',
+                    label: 'Downloadable',
+                    attributes: {
+                        download: 'file'
+                    }
+                }
+            }
+        },
+        list: {
+            properties: {
+                styles: true,
+                startIndex: true,
+                reversed: true
+            }
+        },
+        placeholder: 'Type or paste your content here!',
+        table: {
+            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+        }
+    }
+    configUpdateAlert(editorConfig);
+
+    function configUpdateAlert(config) {
+        if (configUpdateAlert.configUpdateAlertShown) {
+            return;
+        }
+
+        const isModifiedByUser = (currentValue, forbiddenValue) => {
+            if (currentValue === forbiddenValue) {
+                return false;
+            }
+
+            if (currentValue === undefined) {
+                return false;
+            }
+
+            return true;
+        };
+
+        const valuesToUpdate = [];
+
+        configUpdateAlert.configUpdateAlertShown = true;
+
+        if (!isModifiedByUser(config.cloudServices?.tokenUrl, '<YOUR_CLOUD_SERVICES_TOKEN_URL>')) {
+            valuesToUpdate.push('CLOUD_SERVICES_TOKEN_URL');
+        }
+
+        if (valuesToUpdate.length) {
+            window.alert(
+                    [
+                        'Please update the following values in your editor config',
+                        'to receive full access to Premium Features:',
+                        '',
+                        ...valuesToUpdate.map(value => ` - ${value}`)
+                    ].join('\n')
+            );
+        }
+    }
+
+    ClassicEditor.create(document.querySelector('#editContent'), editorConfig).then((editor) => window.editor = editor);
+</script>
+<script>
+    let id = null;
     const manageArticlesButton = document.getElementById('manageArticles');
     const viewProfileButton = document.getElementById('viewProfile');
     const profileInfo = document.getElementById('profileInfo');
@@ -218,15 +474,110 @@
         profileInfo.classList.remove('hidden');
     });
 
-    function openEditForm(articleId) {
+    function bindDataToForm(article) {
+        document.getElementById('editTitle').value = article.title;
+        if (window.editor != null) {
+            editor.setData(article.content);
+        }
+        document.getElementById('editCategory').value = article.category;
+        document.getElementById('editSummary').value = article.summary;
+        document.getElementById('editTags').value = article.tags.join(",");
+    }
+
+    async function openEditForm(articleId) {
+        id = articleId;
         articleManagement.classList.add('hidden');
         editArticleForm.classList.remove('hidden');
-        // Populate form with article data here if needed
+        const resp = await fetch("http://localhost:8080/editor/get-article-by-id/" + articleId);
+        if (resp.status === 200) {
+            const jsonData = await resp.json();
+            bindDataToForm(jsonData);
+        }
+    }
+
+    document.getElementById('editArticleForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const data = {
+            title: document.getElementById('editTitle').value,
+            summary: document.getElementById('editSummary').value,
+            content: window.editor.getData(),
+            tags: document.getElementById('editTags').value.split(","),
+            category: document.getElementById("editCategory").value,
+        }
+        const thumbnail = document.getElementById('editThumbnail').files[0];
+        if (thumbnail != null) {
+            // upload thumbnail
+            uploadImage(thumbnail, (url) => {
+            }).then(response => response.json())
+                    .then(data => {
+                        data['thumbnail'] = data.secure_url;
+                        fetchEdit(data).then();
+                    })
+                    .catch(error => {
+                        console.error('Error uploading image:', error);
+                    });
+            return;
+        }
+        await fetchEdit(data);
+    }
+
+    async function fetchEdit(data) {
+        const resp = await fetch('http://localhost:8080/editor/edit-article/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        if (resp.status === 200) {
+            //                 reload page
+            alert('Edited');
+            window.location.reload();
+        }
     }
 
     function cancelEdit() {
         editArticleForm.classList.add('hidden');
         articleManagement.classList.remove('hidden');
+    }
+
+    function openDeniedForm(articleId) {
+        document.getElementById('denied-form').classList.toggle('d-none')
+    }
+
+    function uploadImage(file, callback) {
+        if (!file) {
+            alert('Please select a file to upload');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'kan_dev_preset');
+        formData.append('cloud_name', 'deci5hpja');
+
+        return fetch(`https://api.cloudinary.com/v1_1/deci5hpja/image/upload`, {
+            method: 'POST',
+            body: formData
+        });
+    }
+
+    async function handleDenied(articleId) {
+        const reason = document.getElementById('reason').value;
+        if (reason.value === '') {
+            alert('Hãy nhập lý do');
+            return;
+        }
+        const resp = await fetch("http://localhost:8080/editor/denied-article/" + articleId, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({note: reason})
+        })
+        if (resp.status === 200) {
+            window.location.reload();
+        }
     }
 </script>
 </body>

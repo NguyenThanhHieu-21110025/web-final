@@ -18,7 +18,7 @@ passport.use(new GoogleStrategy({
         email: profile.emails[0].value,
         password: null // Không cần mật khẩu khi đăng nhập qua Google
     });
-    
+
     await newUser.save();
     done(null, newUser);
 }));
@@ -37,7 +37,7 @@ passport.use(new FacebookStrategy({
     const newUser = new User({
         username: profile.displayName,
         email: profile.emails[0].value,
-        password: null 
+        password: null
     });
 
     await newUser.save();

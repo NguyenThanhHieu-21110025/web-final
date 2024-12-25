@@ -3,7 +3,7 @@ const User = require("../models/user.Model");
 const puppeteer = require("puppeteer");
 const path = require("path");
 const ApiResponse = require("../utils/ApiReponse");
-
+const authController = require("../controllers/auth.Controller");
 const generatePDF = async (htmlContent, articleTitle) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -43,23 +43,22 @@ const subscriberController = {
         });
     },
     profile: async (req, res) => {
-        return res.render("subscriber/profile");
+        return res.render("subscriber/profile", {me: {...req.session.user, name: req.session.user.email[0]}});
     },
     subscribe: async (req, res, next) => {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.session.user.userId);
         if (!user) {
             return ApiResponse.notFound(res, "User not found", 404);
         }
-        // TODO : handle when subscribe.
-
-        await User.findByIdAndUpdate(req.user.id, {
-            $inc: {subscriptionExpiry: 1000 * 60 * 60 * 24 * 7},
+        const sevenDaysFromNow = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+        await User.findByIdAndUpdate(user._id, {
+            subscriptionExpiry: sevenDaysFromNow,
+            role: 'subscriber'
         });
-        return ApiResponse.success(res);
+        return authController.userLogout(req, res);
     },
     downloadArticle: async (req, res) => {
         try {
-            // Kiểm tra xem người dùng đã đăng nhập chưa
             if (!req.user) {
                 return res.status(401).json({message: "Unauthorized"});
             }
@@ -83,6 +82,7 @@ const subscriberController = {
             //Gen PDF file
             const filePath = await generatePDF(article?.content, article?.title);
             // Tải file
+
             res.download(filePath, (err) => {
                 if (err) {
                     return res
