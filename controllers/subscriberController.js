@@ -4,6 +4,7 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const ApiResponse = require("../utils/ApiReponse");
 const authController = require("../controllers/auth.Controller");
+const fs = require("fs");
 const generatePDF = async (htmlContent, articleTitle) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -18,8 +19,17 @@ const generatePDF = async (htmlContent, articleTitle) => {
             .footer { text-align: center; font-size: 12px; color: #aaa; }
         `,
     });
-    // example page
-    const filePath = path.join(__dirname, "../pdfs", `${articleTitle}.pdf`);
+    const pdfDir = path.join(__dirname, '../pdfs');
+
+    if (!fs.existsSync(pdfDir)) {
+        fs.mkdirSync(pdfDir, { recursive: true }); // Create the directory if it doesn't exist
+    }
+    const filePath = path.join(
+        __dirname,
+        "../pdfs",
+        `${articleTitle.replace(/\s+/g, '_').replace(/\.\./g, '.')}.pdf`
+    );
+    console.log(filePath)
     await page.pdf({
         path: filePath,
         format: "A4",
@@ -59,12 +69,12 @@ const subscriberController = {
     },
     downloadArticle: async (req, res) => {
         try {
-            if (!req.user) {
+            if (!req.session.user) {
                 return res.status(401).json({message: "Unauthorized"});
             }
 
             // Lấy thông tin người dùng
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.session.user.userId);
             if (!user) {
                 return res.status(404).json({message: "User not found"});
             }
