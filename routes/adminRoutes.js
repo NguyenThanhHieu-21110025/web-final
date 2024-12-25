@@ -7,7 +7,7 @@ router.get('/api/users', adminController.getUsers);
 router.get('/api/users/:id',  adminController.getUserById);
 router.post('/api/users', adminController.addUser);
 router.put('/api/users/:id/edit',  adminController.updateUser);
-router.delete('/api/users/:id/delete',  adminController.deleteUser);
+router.post('/api/users/:id/delete',  adminController.deleteUser);
 router.get('/admin/dashboard', adminController.renderDashboard);
 
 router.get('/api/articles', adminController.getArticles); 
@@ -38,7 +38,28 @@ router.get('/articles/pending', adminController.renderPendingArticles);
 
 router.get('/profile', adminController.renderProfile); 
 
-router.put('/articles/:id/publish', adminController.publishArticle); 
-router.put('/articles/:id/deny', adminController.denyArticle); 
+router.get('/articles/:id/publish', adminController.publishArticle); 
+router.get('/articles/:id/deny', adminController.denyArticle); 
+
+router.post('/articles/:id/update', adminController.updateArticle);
+router.get('/articles/:id/update', adminController.updateArticle);
+
+router.post('/articles/:id/delete', adminController.deleteArticle);
+
+router.post('/categories/:id/update', adminController.updateCategory);
+router.get('/categories/:id/update', adminController.updateCategory);
+
+router.post('/categories/:id/delete', adminController.deleteCategory);
+
+router.post('/tags/:id/update', adminController.updateTag);
+router.get('/tags/:id/update', adminController.updateTag);
+
+router.post('/tags/:id/delete', adminController.deleteTag);
+
+router.post('/users/:id/update', adminController.updateUser);
+router.get('/users/:id/update', adminController.updateUser);
+
+router.post('/users/:id/delete', adminController.deleteUser);
+
 
 module.exports = router;

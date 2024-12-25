@@ -16,6 +16,13 @@ const CommentRoutes = require("./routes/comment.Route");
 const tagsRoutes = require("./routes/tag.Route");
 const mediaRoutes = require("./routes/media.Route");
 const adminRoutes = require("./routes/adminRoutes");
+
+const multer = require('multer');
+
+const upload = multer({ dest: 'uploads/' });
+
+
+const session = require('express-session');
 const editorRoutes = require("./routes/editorRoutes");
 const session = require("express-session");
 const User = require("./models/user.Model");
