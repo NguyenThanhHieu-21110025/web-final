@@ -13,6 +13,6 @@ router.put("/edit-article/:id",  editArticle);
 router.put("/verify-article/:id",  verifyArticle);
 router.delete("/denied-article/:id",  deniedArticle);
 // view routes
-router.get("/writer-article",  allWriterArticleView);
+router.get("/writer-article", allWriterArticleView);
 // NOTE  : u can add your custom view here
 module.exports = router;

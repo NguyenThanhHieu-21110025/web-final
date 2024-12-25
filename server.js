@@ -17,17 +17,17 @@ const tagsRoutes = require("./routes/tag.Route");
 const mediaRoutes = require("./routes/media.Route");
 const adminRoutes = require("./routes/adminRoutes");
 
-const session = require('express-session');
+const session = require("express-session");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: 'Leu Leu Thanh Hieu',  
-    resave: false,              
-    saveUninitialized: true,     
-    cookie: { secure: false },  
+    secret: "Leu Leu Thanh Hieu",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
   })
 );
 
@@ -64,8 +64,8 @@ app.use("/writer", writerRouters);
 app.use("/api/comment", CommentRoutes);
 app.use("/api/tag", tagsRoutes);
 app.use("/api/media", mediaRoutes);
+app.use("/editor", editorRoutes);
 app.use("/admin", adminRoutes);
-
 
 app.use(express.static("public/css"));
 
