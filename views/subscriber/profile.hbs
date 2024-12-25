@@ -4,24 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    {{> meta}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 </head>
 <body class="bg-gray-100">
 {{> header}}
-
 <div class="container mx-auto px-4 py-8 flex">
     <!-- Sidebar -->
     <aside class="w-1/4 bg-white rounded-lg shadow p-6 mr-4">
         <div class="flex items-center mb-4">
-            <div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold text-white">A</div>
-            <span class="ml-2 text-yellow-500 font-semibold">premium</span>
+            <div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold text-white">
+                {{me.name}}
+            </div>
+            <div class="flex flex-col ml-3">
+                <p class="text-gray-700 font-semibold">{{me.username}}</p>
+                {{#if me.isPremium}}
+                    <p class="text-yellow-400 font-semibold">Premium</p>
+                {{/if}}
+            </div>
         </div>
-        <h2 class="font-bold mb-2">User name</h2>
-        <p class="text-gray-700">Ngoc Anh</p>
+
         <div class="mt-4">
-            <a href="#" class="block text-blue-600 hover:underline">Thông tin chung</a>
-            <a href="#" class="block text-blue-600 hover:underline">Bài viết đã tải</a>
-            <a href="#" class="block text-blue-600 hover:underline">Đăng xuất</a>
+            <a href="profile" class="block text-blue-600 hover:underline">Thông tin chung</a>
+            <!--            <a href="#" class="block text-blue-600 hover:underline">Bài viết đã tải</a>-->
+            <a href="http://localhost:8080/api/auth/logout" class="block text-blue-600 hover:underline">Đăng xuất</a>
         </div>
     </aside>
 
@@ -30,24 +36,54 @@
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h2 class="text-xl font-semibold mb-2">Username</h2>
             <div class="flex justify-between items-center">
-                <p class="text-gray-700">Ngoc Anh</p>
-                <a href="#" class="text-blue-600 hover:underline">Đổi tên</a>
+                <p class="text-gray-700">{{me.username}}</p>
+                <a href="#" id="btn-show-form" class="text-blue-600 hover:underline">Đổi tên</a>
             </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Bài viết đã tải</h2>
-            <div class="bg-gray-100 rounded-lg p-4 mb-4">
-                <h3 class="font-bold">Title</h3>
-                <img src="https://via.placeholder.com/150" alt="Hình minh họa" class="w-full h-32 object-cover rounded mb-2">
-                <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.</p>
-                <span class="text-gray-500 text-sm">Time here</span>
+            <div class="flex">
+                <form id="update-form">
+                    <input type="text" id="update-name" placeholder="Type new username"
+                           class="mt-2 rounded shadow hidden bg-white py-2 px-3 w-full"/>
+                </form>
             </div>
-            <!-- Thêm các bài viết khác tại đây -->
+            <h2 class="text-xl font-semibold mb-2">Premium</h2>
+            <div class="flex justify-between items-center">
+                <p class="text-gray-700">{{me.expiredTime}}</p>
+                {{#if me.isPremium}}
+                {{else}}
+                    <a href="subscribe" id="btn-show-form" class="text-blue-600 hover:underline">subscribe</a>
+                {{/if}}
+            </div>
         </div>
     </div>
 </div>
 
 {{> footer}}
+<script>
+    document.getElementById("btn-show-form").onclick = (e) => {
+        document.getElementById("update-name").classList.toggle("hidden")
+    }
+
+    document.getElementById('update-form').onsubmit = (e) => {
+        e.preventDefault();
+        updateUsername();
+    }
+
+    async function updateUsername() {
+        const newName = document.getElementById("update-name").value;
+        if (newName === "") {
+            return;
+        }
+        const resp = await fetch("http://localhost:8080/profile/update", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({newName})
+        });
+        if (resp.status === 200) {
+            window.location.reload();
+            return;
+        }
+        alert("Something wrong,try later");
+    }
+</script>
 </body>
 </html>
