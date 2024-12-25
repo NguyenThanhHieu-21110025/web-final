@@ -15,9 +15,27 @@ const writerRouters = require("./routes/writerRoutes");
 const CommentRoutes = require("./routes/comment.Route");
 const tagsRoutes = require("./routes/tag.Route");
 const mediaRoutes = require("./routes/media.Route");
+<<<<<<< HEAD
 const editorRoutes = require("./routes/editorRoutes");
-app.use("/public", express.static(path.join(__dirname, "public")));
+=======
+const adminRoutes = require("./routes/adminRoutes");
+
+const session = require('express-session');
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    secret: 'Leu Leu Thanh Hieu',  
+    resave: false,              
+    saveUninitialized: true,     
+    cookie: { secure: false },  
+  })
+);
+
+>>>>>>> d63ae464f2541990a47963b5dfa950fd86839a0d
+app.use("/public", express.static(path.join(__dirname, "public")));
 // app.use(morgan("combined"));
 const dbURI = process.env.MONGODB_ALATS_URI;
 
@@ -51,6 +69,8 @@ app.use("/api/comment", CommentRoutes);
 app.use("/api/tag", tagsRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/editor", editorRoutes);
+app.use("/admin", adminRoutes);
+
 
 app.use(express.static("public/css"));
 

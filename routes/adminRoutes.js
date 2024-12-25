@@ -1,32 +1,44 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/admin.Controller');
-const middlewareController= require('../middleware/auth.Middleware');
-// const adminMiddleware = require('../middleware/admin.Middleware');
+const middlewareController = require('../middleware/auth.Middleware');
 
-// Quản lý người dùng
-router.get('/users',  middlewareController.verifyTokenAndAdminAuth , adminController.getUsers);
-router.get('/users/:id', middlewareController.verifyTokenAndAdminAuth , adminController.getUserById);
-router.post('/users', middlewareController.verifyTokenAndAdminAuth , adminController.addUser);
-router.put('/users/:id', middlewareController.verifyTokenAndAdminAuth , adminController.updateUser);
-router.delete('/users/:id', middlewareController.verifyTokenAndAdminAuth , adminController.deleteUser);
+router.get('/api/users', adminController.getUsers);
+router.get('/api/users/:id',  adminController.getUserById);
+router.post('/api/users', adminController.addUser);
+router.put('/api/users/:id/edit',  adminController.updateUser);
+router.delete('/api/users/:id/delete',  adminController.deleteUser);
+router.get('/admin/dashboard', adminController.renderDashboard);
 
-// Quản lý bài viết
-router.get('/articles', middlewareController.verifyTokenAndAdminAuth , adminController.getArticles);
-router.put('/articles/:id/status', middlewareController.verifyTokenAndAdminAuth , adminController.updateArticleStatus);
+router.get('/api/articles', adminController.getArticles); 
+router.get('/api/articles/:id', adminController.getArticleById); 
+router.put('/api/articles/:id/status', adminController.updateArticleStatus); 
+router.get('/api/articles/pending', adminController.getPendingArticles); 
 
-// Quản lý chuyên mục
-router.get('/categories', middlewareController.verifyTokenAndAdminAuth , adminController.getCategories);
-router.post('/categories', middlewareController.verifyTokenAndAdminAuth , adminController.addCategory);
+router.get('/api/categories', adminController.getCategories);
+router.post('/api/categories', adminController.addCategory);
 
-// Quản lý nhãn
-router.get('/tags', middlewareController.verifyTokenAndAdminAuth , adminController.getTags);
-router.post('/tags', middlewareController.verifyTokenAndAdminAuth , adminController.addTag);
+router.get('/api/tags', adminController.getTags);
+router.post('/api/tags', adminController.addTag);
 
-// Phân công chuyên mục cho biên tập viên
-router.put('/assign-category/:editorId', middlewareController.verifyTokenAndAdminAuth , adminController.assignCategoryToEditor);
+router.put('/api/assign-category/:editorId', adminController.assignCategoryToEditor);
 
-// Gia hạn tài khoản độc giả
-router.put('/extend-subscription/:id', middlewareController.verifyTokenAndAdminAuth , adminController.extendSubscription);
+router.put('/api/extend-subscription/:id', adminController.extendSubscription);
+
+router.get('/dashboard', adminController.renderDashboard); 
+
+router.get('/users', adminController.renderUsers); 
+
+router.get('/categories', adminController.renderCategories); 
+
+router.get('/tags', adminController.renderTags); 
+
+router.get('/articles', adminController.renderArticles); 
+router.get('/articles/pending', adminController.renderPendingArticles); 
+
+router.get('/profile', adminController.renderProfile); 
+
+router.put('/articles/:id/publish', adminController.publishArticle); 
+router.put('/articles/:id/deny', adminController.denyArticle); 
 
 module.exports = router;
