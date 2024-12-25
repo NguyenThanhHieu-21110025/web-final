@@ -17,6 +17,11 @@ const tagsRoutes = require("./routes/tag.Route");
 const mediaRoutes = require("./routes/media.Route");
 const adminRoutes = require("./routes/adminRoutes");
 
+const multer = require('multer');
+
+const upload = multer({ dest: 'uploads/' });
+
+
 const session = require('express-session');
 
 app.use(express.json());
