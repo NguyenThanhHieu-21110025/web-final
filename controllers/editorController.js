@@ -1,6 +1,8 @@
 const ApiResponse = require("../utils/ApiReponse");
 const User = require("../models/user.Model");
 const Article = require("../models/articleModel");
+const {ar, fa, ne} = require("@faker-js/faker");
+const Category = require("../models/categoryModel");
 const editorController = {
     getAllWriterArticle: async (req, res) => {
         try {
@@ -53,11 +55,11 @@ const editorController = {
     verifyArticle: async (req, res) => {
         try {
             const {id} = req.params;
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.session.user.userId);
             if (!user) {
                 return ApiResponse.notFound(res, "User not found", 404);
             }
-            const article = await Article.find({_id: id});
+            const article = await Article.findById(id);
             if (!article) {
                 return ApiResponse.notFound(res, "Article not found", 404);
             }
@@ -66,8 +68,7 @@ const editorController = {
             article.isPublished = true;
             article.updatedAt = Date.now();
             await article.save();
-
-            return ApiResponse.success(res);
+            return res.redirect('http://localhost:8080/editor/profile');
         } catch (err) {
             console.log(err)
             return ApiResponse.error(res, 500);
@@ -77,11 +78,11 @@ const editorController = {
         try {
             const {id} = req.params;
             const {note} = req.body;
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.session.user.userId);
             if (!user) {
                 return ApiResponse.notFound(res, "User not found", 404);
             }
-            const article = await Article.find({_id: id});
+            const article = await Article.findById(id);
             if (!article) {
                 return ApiResponse.notFound(res, "Article not found", 404);
             }
@@ -101,9 +102,9 @@ const editorController = {
     editArticle: async (req, res) => {
         try {
             const {id} = req.params;
-            const {tags, category, publishedAt} = req.body;
+            const {tags, category, publishedAt, content, title, summary, thumbnail} = req.body;
 
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.session.user.userId);
 
             if (!user) {
                 return ApiResponse.notFound(res, "User not found", 404);
@@ -119,7 +120,10 @@ const editorController = {
             }
             if (category) post.category = category;
             if (publishedAt) post.publishedAt = publishedAt;
-
+            if (content && content.length > 1000) post.content = content;
+            if (title && title.length > 20) post.title = title;
+            if (summary && summary.length > 10) post.summary = summary;
+            if (thumbnail) post.thumbnail = thumbnail;
             post.status = 'pending';
 
             post.updatedAt = Date.now();
@@ -132,8 +136,73 @@ const editorController = {
             return ApiResponse.error(res, 500);
         }
     },
+    getArticle: async (req, res) => {
+        const id = req.params.id;
+        if (!id) {
+            return ApiResponse.notFound(res);
+        }
+        console.log(id)
+        const article = await Article.findById(id);
+        return res.status(200).json(article);
+    },
     allWriterArticleView: async (req, res) => {
-        return res.render("editor/writer-article")
+        const allChildCate = await Category.find({parentId: {$ne: null}});
+        const tabs = ['pendingArticles', 'approvedArticles', 'rejectedArticles'];
+        const page = req.query.page || 1;
+        const tab = req.query.tab || tabs[0];
+        const limit = 6;
+        let articles = [];
+        let totalCount = 0;
+        const skip = (page - 1) * limit;
+        let canEdit = false;
+        let canPublish = false;
+        let canDenied = false;
+        let viewInfo = false;
+        switch (tab) {
+            case 'pendingArticles':
+                canEdit = true;
+                canPublish = true;
+                canDenied = true;
+                viewInfo = false;
+
+                articles = await Article.find({status: 'pending'})
+                    .sort({createdAt: -1}).skip(skip).limit(limit)
+                    .populate({path: 'author', model: 'User'});
+                totalCount = await Article.find({status: 'pending'}).countDocuments();
+                break;
+            case 'approvedArticles':
+                canEdit = false;
+                canPublish = false;
+                canDenied = false;
+                viewInfo = true;
+                articles = await Article.find({status: 'published'})
+                    .sort({publishedAt: -1}).skip(skip).limit(limit)
+                    .populate({path: 'author', model: 'User'});
+                totalCount = await Article.find({status: 'published'}).countDocuments();
+                break;
+            case 'rejectedArticles':
+                canEdit = true;
+                canPublish = false;
+                canDenied = false;
+                viewInfo = false;
+                articles = await Article.find({status: 'denied'})
+                    .sort({updatedAt: -1}).skip(skip).limit(limit)
+                    .populate({path: 'author', model: 'User'});
+                totalCount = await Article.find({status: 'denied'}).countDocuments();
+                break;
+        }
+        const pages = Math.ceil(totalCount / limit) > 0 ? new Array(Math.ceil(totalCount / limit)).map((_, i) => i + 1) : [];
+        return res.render("editor/writer-article", {
+            user: req.session.user,
+            articles,
+            actions: {
+                canDenied, canEdit, canPublish, viewInfo
+            },
+            allChildCate,
+            paginate: {
+                pages, page, totalCount
+            }
+        })
     }
 }
 

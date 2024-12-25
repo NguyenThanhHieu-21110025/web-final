@@ -84,9 +84,18 @@ const guestController = {
             const paginate = {
                 page, total, pages: new Array(pages - 1).fill(0).map((_, i) => i + 1)
             }
-            const articles = await Article.find({category: categoryId}).skip((page - 1) * limit).limit(limit);
-            const newArticle = await Article.find({category: categoryId}).sort({createdAt: -1}).limit(10);
-            const mostViewArticle = await Article.find({category: categoryId}).sort({views: -1}).limit(limit);
+            const articles = await Article.find({
+                category: categoryId,
+                status: 'published'
+            }).skip((page - 1) * limit).limit(limit);
+            const newArticle = await Article.find({
+                category: categoryId,
+                status: 'published'
+            }).sort({createdAt: -1}).limit(10);
+            const mostViewArticle = await Article.find({
+                category: categoryId,
+                status: 'published'
+            }).sort({views: -1}).limit(limit);
             res.render('guest/category', {
                 title,
                 articles,

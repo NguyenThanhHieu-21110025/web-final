@@ -19,10 +19,8 @@ router.get('/login', (req, res) => {
 router.post('/login', authController.loginUser);
 
 
-
-
 // Đăng xuất người dùng
-router.post("/logout", async (req, res) => {
+router.get("/logout", async (req, res) => {
     await authController.userLogout(req, res);
 });
 
