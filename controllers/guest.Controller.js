@@ -7,6 +7,18 @@ const getLocalUri = require("../utils/UriHelper");
 const getAllCategory = require("../utils/LayoutHelper");
 const APP_URI = getLocalUri("guest");
 const guestController = {
+    commentArticle: async (req, res) => {
+        const {content} = req.body;
+        const id = req.params.id;
+        const {username} = req.session.user;
+
+        await new Comment({
+            article_id: id,
+            user_name: username,
+            content: content
+        }).save();
+        return res.redirect('http://localhost:8080/guest/article/' + id);
+    },
     home: async (req, res) => {
         try {
             // dont forget it
@@ -119,7 +131,10 @@ const guestController = {
             const total = await Article.find({tags: {$in: req.params.name}}).countDocuments();
             const pages = Math.ceil(total / limit);
             const totalPage = pages > 0 ? new Array(pages - 1).fill(0).map((_, i) => i + 1) : []
-            const newArticle = await Article.find({tags: {$in: req.params.name}}).sort({createdAt: -1}).limit(limit);
+            const newArticle = await Article.find({
+                tags: {$in: req.params.name},
+                status: 'published'
+            }).sort({createdAt: -1}).limit(limit);
             const allCategory = await getAllCategory();
             res.render('guest/tag', {
                 allCategory,
@@ -134,11 +149,20 @@ const guestController = {
     getArticleDetail: async (req, res) => {
         try {
             const article = await Article.findById(req.params.id);
-            console.log(article)
             const comments = await Comment.find({article_id: article._id}).sort({created_at: -1});
-            const relationArticles = await Article.find({category: article.category}).sort({createdAt: -1}).limit(10);
-
-            res.render('guest/article', {article, comments, relationArticles});
+            const relationArticles = await Article.find({
+                category: article.category,
+                status: 'published'
+            }).sort({createdAt: -1}).limit(10);
+            const user = req.session.user;
+            const canDownload = user != null ? user.isPremium : false
+            console.log(canDownload)
+            res.render('guest/article', {
+                canDownload,
+                article,
+                comments,
+                relationArticles
+            });
         } catch (err) {
             res.status(500).json(err);
         }

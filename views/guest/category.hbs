@@ -28,7 +28,7 @@
             <section>
                 <h2 class="text-xl font-bold mb-4">Bài Viết Nổi Bật</h2>
                 {{#each articles}}
-                    <a  href="{{../uri}}/article/{{_id}}">
+                    <a href="{{../uri}}/article/{{_id}}">
                         <article class="bg-white rounded-lg pb-8">
                             <div class="grid grid-cols-12">
                                 <div class="col-span-5">
@@ -43,28 +43,27 @@
                             </div>
                         </article>
                     </a>
-
                 {{/each}}
 
                 <!-- Most Viewed Article -->
                 <section>
                     <h2 class="text-xl font-bold mb-4">Bài viết xem nhiều nhất</h2>
                     {{#each mostViewArticle}}
-                    <a class="mb-8" href="{{../uri}}/article/{{_id}}">
-                        <article class="bg-white rounded-lg pb-8">
-                            <div class="grid grid-cols-12 ">
-                                <div class="col-span-4">
-                                    <img loading="lazy" src="{{thumbnail}}" alt="Most viewed"
-                                         class="w-full h-32 rounded object-cover">
+                        <a class="mb-8" href="{{../uri}}/article/{{_id}}">
+                            <article class="bg-white rounded-lg pb-8">
+                                <div class="grid grid-cols-12 ">
+                                    <div class="col-span-4">
+                                        <img loading="lazy" src="{{thumbnail}}" alt="Most viewed"
+                                             class="w-full h-32 rounded object-cover">
+                                    </div>
+                                    <div class="col-span-8 pl-4">
+                                        <h3 class="text-lg mb-2">{{title}}</h3>
+                                        <p class="text-gray-600 mb-2 line-clamp-3">{{summary}}</p>
+                                        <span class="text-gray-500 text-sm">{{createdAt}}</span>
+                                    </div>
                                 </div>
-                                <div class="col-span-8 pl-4">
-                                    <h3 class="text-lg mb-2">{{title}}</h3>
-                                    <p class="text-gray-600 mb-2 line-clamp-3">{{summary}}</p>
-                                    <span class="text-gray-500 text-sm">{{createdAt}}</span>
-                                </div>
-                            </div>
-                        </article>
-                    </a>
+                            </article>
+                        </a>
                     {{/each}}
                 </section>
                 <div class="flex justify-center items-center gap-2 mt-8 mb-8">
@@ -83,13 +82,17 @@
             <div class="space-y-4" id="latest-articles">
                 <!-- Latest Article Cards -->
                 {{#each newArticle}}
-                    <div class="bg-white rounded-lg shadow">
-                        <img loading="lazy" src="{{thumbnail}}" alt="Latest article"
-                             class="w-full h-32 object-cover mb-2">
-                        <div class="p-4">
-                            <h3 class="font-semibold">{{title}}</h3>
-                            <span class="text-gray-500 text-sm">{{createdAt}}</span>
-                        </div>
+                    <div class="mb-2">
+                        <a href="http://localhost:8080/guest/article/{{_id}}">
+                            <div class="bg-white rounded-lg shadow">
+                                <img loading="lazy" src="{{thumbnail}}" alt="Latest article"
+                                     class="w-full h-32 object-cover mb-2">
+                                <div class="p-4">
+                                    <h3 class="font-semibold">{{title}}</h3>
+                                    <span class="text-gray-500 text-sm">{{createdAt}}</span>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 {{/each}}
             </div>

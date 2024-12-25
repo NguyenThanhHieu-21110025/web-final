@@ -5,44 +5,81 @@
     <title>Bài Viết</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        h1, h2, h3, h4, h5, h6 {
+            all: unset; /* Reset all styles applied to headings */
+            font-size: revert; /* Revert to default browser styles */
+            font-weight: revert;
+        }
+    </style>
 </head>
 <body>
 {{> header}}
 
 <div class="container mx-auto px-4 py-8">
-    <article class="bg-white rounded-lg shadow p-6" id="article-content">
-        <h1 class="text-3xl font-bold mb-2">{{article.title}}</h1>
-        <div class="flex justify-between items-center mb-4">
-            {{#if article.isPremium}}
-                <span class="text-yellow-500 font-semibold">Premium</span>
-            {{/if}}
-            <span class="text-gray-500">{{article.createdAt}}</span>
-        </div>
-        <img loading="lazy" src="{{article.thumbnail}}" alt="Hình minh họa"
-             class="w-full h-64 object-cover rounded mb-4">
-        <div>
-            {{{article.content}}}
-        </div>
-        <a href="#" class="text-blue-600 hover:underline">Tải về</a>
-    </article>
-
-    <div class="mt-8" id="comments-section">
-        <h2 class="text-xl font-bold mb-4">Comments ({{comments.length}})</h2>
-        {{#each comments}}
-            <div class="bg-white rounded-lg shadow p-4 mb-4">
-                <div class="flex items-center mb-2">
-                    <span class="font-semibold">{{user_name}}</span>
-                    <span class="text-gray-500 text-sm ml-2">{{created_at}}</span>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-8">
+            <article class="bg-white rounded-lg shadow p-6" id="article-content">
+                <h1 class="text-3xl font-bold mb-2">{{article.title}}</h1>
+                <div class="flex justify-between items-center mb-4">
+                    {{#if article.isPremium}}
+                        <span class="text-yellow-500 font-semibold">Premium</span>
+                    {{/if}}
+                    <span class="text-gray-500">{{article.createdAt}}</span>
                 </div>
-                <p class="text-gray-700">{{content}}</p>
+                <img loading="lazy" src="{{article.thumbnail}}" alt="Hình minh họa"
+                     class="w-full h-64 object-cover rounded mb-4">
+                <div class="prose">
+                    {{{article.content}}}
+                </div>
+                {{#if canDownload}}
+                    <a href="http://localhost:8080/subscriber/download/{{article._id}}"
+                       class="text-blue-600 hover:underline">Tải về</a>
+                {{/if}}
+            </article>
+            <div class="mt-8" id="comments-section">
+                <h2 class="text-xl font-bold mb-4">Comments ({{comments.length}})</h2>
+                {{#each comments}}
+                    <div class="bg-white rounded-lg shadow p-4 mb-4">
+                        <div class="flex items-center mb-2">
+                            <span class="font-semibold">{{user_name}}</span>
+                            <span class="text-gray-500 text-sm ml-2">{{created_at}}</span>
+                        </div>
+                        <p class="text-gray-700">{{content}}</p>
+                    </div>
+                {{/each}}
             </div>
-        {{/each}}
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-4 mt-4">
-        <h3 class="text-lg font-semibold mb-2">Ý kiến của bạn</h3>
-        <textarea class="w-full border rounded p-2 mb-4" rows="4" placeholder="Bạn nghĩ gì về bài viết này?"></textarea>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Gửi ý kiến</button>
+            <form method="post" action="http://localhost:8080/guest/article/comment/{{article._id}}"
+                  class="bg-white rounded-lg shadow p-4 mt-4">
+                <h3 class="text-lg font-semibold mb-2">Ý kiến của bạn</h3>
+                <textarea name="content" required class="w-full border rounded p-2 mb-4" rows="4"
+                          placeholder="Bạn nghĩ gì về bài viết này?"></textarea>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Gửi ý kiến</button>
+            </form>
+        </div>
+        <div class="col-span-4">
+            <aside class="lg:col-span-3">
+                <h2 class="text-xl font-bold mb-4">Bài Viết Liên Quan</h2>
+                <div class="space-y-4" id="latest-articles">
+                    <!-- Latest Article Cards -->
+                    {{#each relationArticles}}
+                        <div class="mb-2">
+                            <a href="http://localhost:8080/guest/article/{{_id}}">
+                                <div class="bg-white rounded-lg shadow">
+                                    <img loading="lazy" src="{{thumbnail}}" alt="Latest article"
+                                         class="w-full h-32 object-cover mb-2">
+                                    <div class="p-4">
+                                        <h3 class="font-semibold">{{title}}</h3>
+                                        <span class="text-gray-500 text-sm">{{createdAt}}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {{/each}}
+                </div>
+            </aside>
+        </div>
     </div>
 </div>
 
