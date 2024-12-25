@@ -35,23 +35,36 @@ const adminController = {
 
     updateUser: async (req, res) => {
         try {
-            const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-            if (!updatedUser) return res.status(404).json({ message: 'User not found' });
-            res.status(200).json(updatedUser);
+            const { username, email, full_name, pen_name, role } = req.body;
+            const userId = req.params.id;
+    
+            const user = await User.findById(userId);
+            if (!user) return res.status(404).json({ message: 'User not found' });
+    
+            user.username = username;
+            user.email = email;
+            user.full_name = full_name;
+            user.pen_name = pen_name;
+            user.role = role;
+    
+            await user.save();
+            res.redirect('/admin/users');
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-
+    
+    
     deleteUser: async (req, res) => {
         try {
             const deletedUser = await User.findByIdAndDelete(req.params.id);
             if (!deletedUser) return res.status(404).json({ message: 'User not found' });
-            res.status(200).json({ message: 'User deleted' });
+            res.redirect('/admin/dashboard');
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
+    
 
     renderUsers: async (req, res) => {
         try {
@@ -313,6 +326,101 @@ const adminController = {
             res.status(500).json({ message: error.message });
         }
     },
+    updateArticle: async (req, res) => {
+        try {
+            const { title, content, tags, isPublished, thumbnail, note } = req.body;
+    
+            if (!title || !content) {
+                return res.status(400).json({ message: 'Title and content are required.' });
+            }
+    
+            const articleId = req.params.id;
+            const article = await Article.findById(articleId);
+            if (!article) return res.status(404).json({ message: 'Article not found' });
+    
+            article.title = title;
+            article.content = content;
+            article.tags = tags.split(",");  
+            article.isPublished = isPublished;
+            article.note = note;
+    
+            if (req.file) {
+                article.thumbnail = req.file.path;
+            }
+    
+            await article.save();
+            res.redirect('/admin/articles');  
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    
+    
+    
+    deleteArticle: async (req, res) => {
+        try {
+            const deletedArticle = await Article.findByIdAndDelete(req.params.id);
+            if (!deletedArticle) return res.status(404).json({ message: 'Article not found' });
+            res.redirect('/admin/dashboard');
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    updateCategory: async (req, res) => {
+        try {
+            const { category_name } = req.body;
+            const categoryId = req.params.id;
+    
+            const category = await Category.findById(categoryId);
+            if (!category) return res.status(404).json({ message: 'Category not found' });
+    
+            category.category_name = category_name;
+    
+            await category.save();
+            res.redirect('/admin/categories');
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    
+    
+    deleteCategory: async (req, res) => {
+        try {
+            const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+            if (!deletedCategory) return res.status(404).json({ message: 'Category not found' });
+            res.redirect('/admin/dashboard');
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    updateTag: async (req, res) => {
+        try {
+            const { tag_name } = req.body;
+            const tagId = req.params.id;
+    
+            const tag = await Tag.findById(tagId);
+            if (!tag) return res.status(404).json({ message: 'Tag not found' });
+    
+            tag.tag_name = tag_name;
+    
+            await tag.save();
+            res.redirect('/admin/tags');
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    
+    
+    deleteTag: async (req, res) => {
+        try {
+            const deletedTag = await Tag.findByIdAndDelete(req.params.id);
+            if (!deletedTag) return res.status(404).json({ message: 'Tag not found' });
+            res.redirect('/admin/dashboard');
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+    
 
 
 };
