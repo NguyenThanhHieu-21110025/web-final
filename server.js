@@ -15,20 +15,20 @@ const writerRouters = require("./routes/writerRoutes");
 const CommentRoutes = require("./routes/comment.Route");
 const tagsRoutes = require("./routes/tag.Route");
 const mediaRoutes = require("./routes/media.Route");
-
+const editorRoutes = require("./routes/editorRoutes");
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.json());
 // app.use(morgan("combined"));
 const dbURI = process.env.MONGODB_ALATS_URI;
 
 if (!dbURI) {
-  console.error("MongoDB connection string is not defined.");
-  process.exit(1);
+    console.error("MongoDB connection string is not defined.");
+    process.exit(1);
 }
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-  credentials: true,
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -50,23 +50,24 @@ app.use("/writer", writerRouters);
 app.use("/api/comment", CommentRoutes);
 app.use("/api/tag", tagsRoutes);
 app.use("/api/media", mediaRoutes);
+app.use("/editor", editorRoutes);
 
 app.use(express.static("public/css"));
 
 const port = process.env.PORT || 8080;
 
 mongoose
-  .connect(dbURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
+    .connect(dbURI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+    })
+    .then(() => {
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.log("Error connecting to MongoDB:", err);
+        process.exit(1);
     });
-  })
-  .catch((err) => {
-    console.log("Error connecting to MongoDB:", err);
-    process.exit(1);
-  });

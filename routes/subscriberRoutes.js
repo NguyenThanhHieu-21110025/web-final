@@ -9,4 +9,5 @@ router.get('/subscribe', subscriberController.getSubscriptionOptions);
 // Route để tải bài viết (chỉ dành cho người dùng có đăng ký hợp lệ)
 router.get('/download/:id', checkSubscription, subscriberController.downloadArticle);
 
+router.get("/profile",subscriberController.profile);
 module.exports = router;

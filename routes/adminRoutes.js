@@ -4,7 +4,6 @@ const adminController = require('../controllers/admin.Controller');
 const middlewareController= require('../middleware/auth.Middleware');
 // const adminMiddleware = require('../middleware/admin.Middleware');
 
-
 // Quản lý người dùng
 router.get('/users',  middlewareController.verifyTokenAndAdminAuth , adminController.getUsers);
 router.get('/users/:id', middlewareController.verifyTokenAndAdminAuth , adminController.getUserById);
